@@ -1,0 +1,15 @@
+
+%btn {
+  background-color: $color-secondary-2-0;
+  border: 0;
+  color: $color-secondary-2-4;
+  font-weight: 700;
+}
+
+button,
+a.button,
+input[type=button],
+input[type=reset],
+input[type=submit] {
+  @extend %btn;
+}

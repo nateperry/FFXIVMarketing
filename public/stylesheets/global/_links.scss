@@ -1,3 +1,7 @@
 a {
-  color: #00B7FF;
+  color: $link-color;
+  text-decoration: none;
+  &:hover, &:focus {
+    color: $link-hover-color;
+  }
 }

@@ -1,0 +1,17 @@
+
+input {
+  background-color: transparent;
+  border: 0;
+  border-bottom: 1px solid $gray-med-1;
+  padding: 2px 4px;
+  width: 100%;
+  &:focus {
+    border-color: $color-secondary-2-0;
+    color: $color-secondary-2-0;
+    outline: none;
+  }
+  &.invalid {
+    border-color: $alert-red;
+    color: $alert-red;
+  }
+}

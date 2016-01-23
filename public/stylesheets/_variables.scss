@@ -20,7 +20,7 @@ $color-secondary-1-2: #415965;
 $color-secondary-1-3: #123552;
 $color-secondary-1-4: #042037;
 
-$color-secondary-2-0: #AA7A39;	// Main Secondary color (2) */
+$color-secondary-2-0: #bb7619;	// Main Secondary color (2) */
 $color-secondary-2-1: #FFDBAA;
 $color-secondary-2-2: #D4A86A;
 $color-secondary-2-3: #805315;
@@ -34,6 +34,8 @@ $color-complement-4: #18063A;
 
 $green-sold: #4db76f;
 
+$alert-red: #ae2d07;
+
 
 // helpers
 $border-color: #000;//$gray-dark-1;
@@ -43,6 +45,9 @@ $border-radius: 6px;
 
 $body-bg: $black;
 $body-color: $white;
+
+$link-color: $color-secondary-2-1;
+$link-hover-color: $color-secondary-2-0;
 
 // tables
 $table-border: 1px solid $border-color;

@@ -23332,6 +23332,85 @@ module.exports = {
 
 },{}],162:[function(require,module,exports){
 /**
+ * Display a new Transaction form as a table row
+ */
+
+module.exports = React.createClass({displayName: "exports",
+  _cta: null,
+  componentDidMount: function () {
+    var _self = this;
+    this._cta = $('.new-transaction');
+
+    var inputs = this._cta.find('input');
+    inputs.on('focus', function () {
+      $(this).removeClass('invalid')
+    });
+
+    inputs.on('keypress', function (e) {
+      if (e.which == 13) {
+        _self.submit();
+      }
+    });
+
+    this._cta.find('.new-transaction-submit').on('click', function (e) {
+      _self.submit();
+    });
+  },
+  submit: function () {
+    var obj = {};
+    var _invalid = false;
+    $('.new-transaction').find('input').each(function () {
+      var $input = $(this);
+      var val = $input.val().trim();
+      if ($input.prop('required') && val == '') {
+        _invalid = true;
+        $input.addClass('invalid');
+        return;
+      }
+      obj[$input.attr('name')] = val;
+    });
+
+    if (_invalid) {
+      this._cta.find('input.invalid').first().focus();
+      alert('Missing a required field!');
+      return false;
+    }
+
+    $.ajax({
+      url: '/api/insert',
+      dataType: 'json',
+      data: obj,
+      success: function (resp) {
+        console.log(resp);
+      },
+      error: function () {
+        alert('An error occurred and your entry was not added');
+      },
+      complete: function () {
+        // TODO: hide ajax
+      }
+    })
+
+  },
+  render: function () {
+    return (
+      React.createElement("tr", {className: "new-transaction"}, 
+        React.createElement("td", null, React.createElement("input", {type: "text", name: "name", required: true})), 
+        React.createElement("td", null, React.createElement("input", {type: "text", name: "price_listed", required: true})), 
+        React.createElement("td", null, React.createElement("input", {type: "text", name: "quantity", required: true})), 
+        React.createElement("td", null, " "), 
+        React.createElement("td", null, React.createElement("input", {type: "text", name: "date_listed", defaultValue: moment().format(Constants.formats.dates.display), required: true})), 
+        React.createElement("td", null, React.createElement("input", {type: "text", name: "date_sold"})), 
+        React.createElement("td", null, React.createElement("input", {type: "text", name: "price_sold"})), 
+        React.createElement("td", null, " "), 
+        React.createElement("td", null, React.createElement("button", {type: "button", className: "new-transaction-submit"}, "+"))
+      )
+    )
+  }
+});
+
+},{}],163:[function(require,module,exports){
+/**
  * Display a Transaction as a table row
  */
 
@@ -23358,22 +23437,15 @@ module.exports = React.createClass({displayName: "exports",
   }
 });
 
-},{}],163:[function(require,module,exports){
+},{}],164:[function(require,module,exports){
 var Transaction_row = require('./Transaction_row.jsx');
+var Transaction_new_row = require('./Transaction_new_row.jsx');
 
 module.exports = React.createClass({displayName: "exports",
   getInitialState: function () {
     return {
       transactions: JSON.parse(document.getElementById('initial-trans').innerHTML)
     };
-  },
-  componentDidMount: function () {
-    console.log(this.state);
-    var self = this;
-    //$(window).on('keypress', function (e) {
-    //  // TODO: hook up key bindings, consider using keyhandler class
-    //  console.log('key pressed:' + e.which + ' = ' + self.keyMap[e.which]);
-    //});
   },
   render: function() {
     return (
@@ -23394,56 +23466,15 @@ module.exports = React.createClass({displayName: "exports",
         React.createElement("tbody", null, 
         this.state.transactions.map(function (row, index) {
           return React.createElement(Transaction_row, {transaction: row, key: index});
-        })
+        }), 
+        React.createElement(Transaction_new_row, null)
         )
       )
     );
-  },
-  keyMap: {
-    '13': 'enter',
-    '32': 'pauseAll',
-    // 0 - 9
-    '48':'',
-    '49':'',
-    '50':'',
-    '51':'',
-    '52':'',
-    '53':'',
-    '54':'',
-    '55':'',
-    '56':'',
-    '57':'',
-    // a-z
-    '97':'',
-    '98':'',
-    '99':'',
-    '100':'',
-    '101':'',
-    '102':'',
-    '103':'',
-    '104':'',
-    '105':'',
-    '106':'',
-    '107':'',
-    '108':'',
-    '109':'',
-    '110':'',
-    '111':'',
-    '112':'',
-    '113':'',
-    '114':'',
-    '115':'',
-    '116':'',
-    '117':'',
-    '118':'',
-    '119':'',
-    '120':'',
-    '121':'',
-    '122':''
   }
 });
 
-},{"./Transaction_row.jsx":162}],164:[function(require,module,exports){
+},{"./Transaction_new_row.jsx":162,"./Transaction_row.jsx":163}],165:[function(require,module,exports){
 /**
  * app.jsx
  *
@@ -23467,4 +23498,4 @@ ReactDOM.render(
 
 console.log('app initialized');
 
-},{"./Constants.jsx":161,"./Transactions.jsx":163,"moment":2,"numeral":3,"react":160,"react-dom":4}]},{},[164]);
+},{"./Constants.jsx":161,"./Transactions.jsx":164,"moment":2,"numeral":3,"react":160,"react-dom":4}]},{},[165]);

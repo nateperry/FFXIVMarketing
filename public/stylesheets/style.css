@@ -410,7 +410,11 @@ body {
 }
 
 a {
-  color: #00B7FF;
+  color: #FFDBAA;
+  text-decoration: none;
+}
+a:hover, a:focus {
+  color: #bb7619;
 }
 
 table {
@@ -460,4 +464,32 @@ table tbody tr:last-child td:last-child, table tbody tr:last-child th:last-child
   -moz-border-radius: 0 0 6px 0;
   -webkit-border-radius: 0;
   border-radius: 0 0 6px 0;
+}
+
+input {
+  background-color: transparent;
+  border: 0;
+  border-bottom: 1px solid #bfbfbf;
+  padding: 2px 4px;
+  width: 100%;
+}
+input:focus {
+  border-color: #bb7619;
+  color: #bb7619;
+  outline: none;
+}
+input.invalid {
+  border-color: #ae2d07;
+  color: #ae2d07;
+}
+
+button,
+a.button,
+input[type=button],
+input[type=reset],
+input[type=submit] {
+  background-color: #bb7619;
+  border: 0;
+  color: #553100;
+  font-weight: 700;
 }
