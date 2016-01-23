@@ -397,10 +397,67 @@ th {
 }
 
 body {
-  padding: 50px;
+  background-color: #232321;
+  color: #ffffff;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  padding: 20px;
+}
+
+.container {
+  margin: 30px auto;
+  max-width: 1400px;
+  width: 100%;
 }
 
 a {
   color: #00B7FF;
+}
+
+table {
+  width: 100%;
+}
+table td, table th {
+  text-align: center;
+  padding: 4px 6px;
+}
+table td:first-child, table th:first-child {
+  text-align: left;
+}
+table td.tax, table th.tax {
+  width: 65px;
+}
+table td.calc {
+  background-color: #282826;
+  color: #505050;
+}
+table tr.sold {
+  background-color: transparent;
+  color: #505050;
+}
+table thead {
+  background-color: #000;
+  color: #ffffff;
+}
+table thead tr:first-child td:first-child, table thead tr:first-child th:first-child {
+  -moz-border-radius: 6px 0 0 0;
+  -webkit-border-radius: 6px;
+  border-radius: 6px 0 0 0;
+}
+table thead tr:first-child td:last-child, table thead tr:first-child th:last-child {
+  -moz-border-radius: 0 6px 0 0;
+  -webkit-border-radius: 0;
+  border-radius: 0 6px 0 0;
+}
+table tbody tr:nth-child(5n) {
+  border-bottom: 1px solid #000;
+}
+table tbody tr:last-child td:first-child, table tbody tr:last-child th:first-child {
+  -moz-border-radius: 0 0 0 6px;
+  -webkit-border-radius: 0;
+  border-radius: 0 0 0 6px;
+}
+table tbody tr:last-child td:last-child, table tbody tr:last-child th:last-child {
+  -moz-border-radius: 0 0 6px 0;
+  -webkit-border-radius: 0;
+  border-radius: 0 0 6px 0;
 }

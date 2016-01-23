@@ -1,0 +1,58 @@
+table {
+  width: 100%;
+  td, th {
+    text-align: center;
+    padding: 4px 6px;
+    &:first-child {
+      text-align: left;
+    }
+    &.tax {
+      width: 65px;
+    }
+  }
+  td {
+    &.calc {
+      background-color: $table-calc-bg;
+      color: $table-calc-color;
+    }
+  }
+  tr {
+    &.sold {
+      background-color: $table-sold-bg;
+      color: $table-sold-color;
+    }
+  }
+  thead {
+    background-color: $table-head-bg;
+    color: $table-head-color;
+    tr {
+      &:first-child {
+        td, th {
+          &:first-child {
+            @include border-radius($border-radius 0 0 0);
+          }
+          &:last-child {
+            @include border-radius(0 $border-radius 0 0);
+          }
+        }
+      }
+    }
+  }
+  tbody {
+    tr {
+      &:nth-child(5n) {
+        border-bottom: $table-border;
+      }
+      &:last-child {
+        td, th {
+          &:first-child {
+            @include border-radius(0 0 0 $border-radius);
+          }
+          &:last-child {
+            @include border-radius(0 0 $border-radius 0);
+          }
+        }
+      }
+    }
+  }
+}

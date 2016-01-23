@@ -1,13 +1,10 @@
 @import "compass/css3";
 
+@import "_variables.scss";
+
 // vendor
 @import "vendor/normalize";
 
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-}
-
-a {
-  color: #00B7FF;
-}
+@import "global/body";
+@import "global/links";
+@import "global/tables";
