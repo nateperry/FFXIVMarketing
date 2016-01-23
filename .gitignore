@@ -29,6 +29,10 @@ node_modules
 # Debug log from npm
 npm-debug.log
 
+### Sass ###
+.sass-cache/
+*.css.map
+
 ### Intellij ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio and Webstorm
 
