@@ -1,5 +1,3 @@
-var React = require('react');
-
 var Transaction_row = require('./Transaction_row.jsx');
 
 module.exports = React.createClass({
@@ -8,7 +6,7 @@ module.exports = React.createClass({
       transactions: [
         {
           name: 'Weak Silencing Potion',
-          price_listed: 450,
+          price_listed: 450000000,
           price_sold: 1283,
           quantity: 3,
           date_listed: 1451088000,
