@@ -5,6 +5,13 @@
  * @created 1//22/2016
  */
 
-var React = require('react');
+var React = require('react'), ReactDOM = require('react-dom');
 
-console.log('app init');
+var Transactions = require('./Transactions.jsx');
+
+ReactDOM.render(
+  <Transactions />,
+  document.getElementById('table-cta')
+);
+
+console.log('app initialized');
