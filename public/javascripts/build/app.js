@@ -23337,6 +23337,9 @@ module.exports = {
 
 module.exports = React.createClass({displayName: "exports",
   _cta: null,
+  getInitialState: function () {
+    return ({submitted: false});
+  },
   componentDidMount: function () {
     var _self = this;
     this._cta = $('.new-transaction');
@@ -23351,13 +23354,9 @@ module.exports = React.createClass({displayName: "exports",
         _self.submit();
       }
     });
-
-    this._cta.find('.new-transaction-submit').on('click', function (e) {
-      _self.submit();
-    });
   },
   submit: function () {
-    var obj = {};
+    var _self = this, obj = {};
     var _invalid = false;
     $('.new-transaction').find('input').each(function () {
       var $input = $(this);
@@ -23367,6 +23366,18 @@ module.exports = React.createClass({displayName: "exports",
         $input.addClass('invalid');
         return;
       }
+      if ($input.hasClass('date')) {
+        if (val != '') {
+          var date = moment(val, Constants.formats.dates.display);
+          if (!date.isValid()) {
+            _invalid = true;
+            $input.addClass('invalid');
+            return;
+          } else {
+            val = date.unix();
+          }
+        }
+      }
       obj[$input.attr('name')] = val;
     });
 
@@ -23375,22 +23386,32 @@ module.exports = React.createClass({displayName: "exports",
       alert('Missing a required field!');
       return false;
     }
-
+    // now submit the form
     $.ajax({
       url: '/api/insert',
       dataType: 'json',
       data: obj,
+      method: 'POST',
       success: function (resp) {
         console.log(resp);
+        if (resp.result == 'ERR') {
+          if (resp.error.errors) {
+            for (var key in resp.error.errors) {
+              _self._cta.find('input[name='+key+']').addClass('invalid');
+            }
+          }
+        } else if (resp.result == 'OK') {
+          console.log('force update');
+          _self.setState({submitted: true});
+        }
       },
       error: function () {
         alert('An error occurred and your entry was not added');
       },
       complete: function () {
-        // TODO: hide ajax
+        // TODO: hide ajaxclassName="date"
       }
-    })
-
+    });
   },
   render: function () {
     return (
@@ -23399,11 +23420,11 @@ module.exports = React.createClass({displayName: "exports",
         React.createElement("td", null, React.createElement("input", {type: "text", name: "price_listed", required: true})), 
         React.createElement("td", null, React.createElement("input", {type: "text", name: "quantity", required: true})), 
         React.createElement("td", null, " "), 
-        React.createElement("td", null, React.createElement("input", {type: "text", name: "date_listed", defaultValue: moment().format(Constants.formats.dates.display), required: true})), 
-        React.createElement("td", null, React.createElement("input", {type: "text", name: "date_sold"})), 
+        React.createElement("td", null, React.createElement("input", {type: "text", name: "date_listed", className: "date", defaultValue: moment().format(Constants.formats.dates.display), required: true})), 
+        React.createElement("td", null, React.createElement("input", {type: "text", name: "date_sold", className: "date"})), 
         React.createElement("td", null, React.createElement("input", {type: "text", name: "price_sold"})), 
         React.createElement("td", null, " "), 
-        React.createElement("td", null, React.createElement("button", {type: "button", className: "new-transaction-submit"}, "+"))
+        React.createElement("td", null, React.createElement("button", {type: "button", className: "new-transaction-submit", onclick: this.submit}, "+"))
       )
     )
   }
@@ -23428,7 +23449,7 @@ module.exports = React.createClass({displayName: "exports",
         React.createElement("td", null, numeral(t.quantity).format()), 
         React.createElement("td", {className: "calc"}, numeral(total_sale_price).format(Constants.formats.numbers.currency)), 
         React.createElement("td", null, moment.unix(t.date_listed).format(Constants.formats.dates.display)), 
-        React.createElement("td", null, moment.unix(t.date_sold).format(Constants.formats.dates.display)), 
+        React.createElement("td", null, t.date_sold?moment.unix(t.date_sold).format(Constants.formats.dates.display):''), 
         React.createElement("td", null, numeral(t.price_sold).format(Constants.formats.numbers.currency)), 
         React.createElement("td", {className: "calc"}, numeral(tax_rate).format(Constants.formats.numbers.percent)), 
         React.createElement("td", {className: "calc"}, numeral(tax_amount).format(Constants.formats.numbers.currency))

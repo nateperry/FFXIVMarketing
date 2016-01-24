@@ -1,22 +1,24 @@
-var express = require('express');
-var router = express.Router();
+var express = require('express'),
+  router = express.Router();
 
-router.get('/', function(req, res, next) {
+var Transaction = require('../model/transaction.js');
+
+
+router.get('/', function (req, res, next) {
   var err = new Error('Access Not Allowed');
   err.status = 403;
   next(err);
 });
 
-router.get('/insert', function(req, res, next) {
-  var db = req.db;
-  var collection = db.get('transactions');
-  //var obj = {"name": "Weak Silencing Potion","price_listed": 1000, "price_sold": 950,"quantity": 10,"date_listed": 1451088000,"date_sold": 1451088000};
-  collection.insert(req.data, function (err) {
+router.post('/insert', function (req, res, next) {
+  var t = new Transaction(req.body);
+  t.save(function (err) {
     var response = {};
     if (err) {
-      response.result = "OK";
+      response.result = "ERR";
       response.message = "An error occurred while inserting the entry";
-      throw err;
+      response.error = err;
+      response.data = req.data;
     } else {
       response.result = "OK";
     }

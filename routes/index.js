@@ -1,11 +1,12 @@
 var express = require('express');
 var router = express.Router();
 
+var Transaction = require('../model/transaction.js');
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  var db = req.db;
-  var collection = db.get('transactions');
-  collection.find({}, {}, function (e, docs) {
+  Transaction.find({}, function (err, docs) {
+    if (err) throw err;
     res.render('index', { title: 'FFXIV Marketing', transactions: JSON.stringify(docs) });
   });
 });

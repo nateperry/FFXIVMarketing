@@ -4,6 +4,9 @@
 
 module.exports = React.createClass({
   _cta: null,
+  getInitialState: function () {
+    return ({submitted: false});
+  },
   componentDidMount: function () {
     var _self = this;
     this._cta = $('.new-transaction');
@@ -18,13 +21,9 @@ module.exports = React.createClass({
         _self.submit();
       }
     });
-
-    this._cta.find('.new-transaction-submit').on('click', function (e) {
-      _self.submit();
-    });
   },
   submit: function () {
-    var obj = {};
+    var _self = this, obj = {};
     var _invalid = false;
     $('.new-transaction').find('input').each(function () {
       var $input = $(this);
@@ -34,6 +33,18 @@ module.exports = React.createClass({
         $input.addClass('invalid');
         return;
       }
+      if ($input.hasClass('date')) {
+        if (val != '') {
+          var date = moment(val, Constants.formats.dates.display);
+          if (!date.isValid()) {
+            _invalid = true;
+            $input.addClass('invalid');
+            return;
+          } else {
+            val = date.unix();
+          }
+        }
+      }
       obj[$input.attr('name')] = val;
     });
 
@@ -42,22 +53,32 @@ module.exports = React.createClass({
       alert('Missing a required field!');
       return false;
     }
-
+    // now submit the form
     $.ajax({
       url: '/api/insert',
       dataType: 'json',
       data: obj,
+      method: 'POST',
       success: function (resp) {
         console.log(resp);
+        if (resp.result == 'ERR') {
+          if (resp.error.errors) {
+            for (var key in resp.error.errors) {
+              _self._cta.find('input[name='+key+']').addClass('invalid');
+            }
+          }
+        } else if (resp.result == 'OK') {
+          console.log('force update');
+          _self.setState({submitted: true});
+        }
       },
       error: function () {
         alert('An error occurred and your entry was not added');
       },
       complete: function () {
-        // TODO: hide ajax
+        // TODO: hide ajaxclassName="date"
       }
-    })
-
+    });
   },
   render: function () {
     return (
@@ -66,11 +87,11 @@ module.exports = React.createClass({
         <td><input type="text" name="price_listed" required /></td>
         <td><input type="text" name="quantity" required /></td>
         <td>&nbsp;</td>
-        <td><input type="text" name="date_listed" defaultValue={moment().format(Constants.formats.dates.display)} required /></td>
-        <td><input type="text" name="date_sold" /></td>
+        <td><input type="text" name="date_listed" className="date" defaultValue={moment().format(Constants.formats.dates.display)} required /></td>
+        <td><input type="text" name="date_sold" className="date" /></td>
         <td><input type="text" name="price_sold" /></td>
         <td>&nbsp;</td>
-        <td><button type="button" className="new-transaction-submit">+</button></td>
+        <td><button type="button" className="new-transaction-submit" onclick={this.submit}>+</button></td>
       </tr>
     )
   }
