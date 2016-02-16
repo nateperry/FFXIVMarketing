@@ -102,7 +102,7 @@ module.exports = React.createClass({
         <td><input type="text" name="date_listed" className="date" value={this.state.date_listed} onChange={this.handleChange} required /></td>
         <td><input type="text" name="date_sold" className="date" value={this.state.date_sold} onChange={this.handleChange} /></td>
         <td><input type="text" name="price_sold" value={this.state.price_sold} onChange={this.handleChange} /></td>
-        <td>&nbsp;</td>
+        <td colSpan="2">&nbsp;</td>
         <td><button type="button" className="new-transaction-submit" onclick={this.submit}>+</button></td>
       </tr>
     )

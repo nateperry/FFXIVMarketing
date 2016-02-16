@@ -23445,7 +23445,7 @@ module.exports = React.createClass({displayName: "exports",
         React.createElement("td", null, React.createElement("input", {type: "text", name: "date_listed", className: "date", value: this.state.date_listed, onChange: this.handleChange, required: true})), 
         React.createElement("td", null, React.createElement("input", {type: "text", name: "date_sold", className: "date", value: this.state.date_sold, onChange: this.handleChange})), 
         React.createElement("td", null, React.createElement("input", {type: "text", name: "price_sold", value: this.state.price_sold, onChange: this.handleChange})), 
-        React.createElement("td", null, " "), 
+        React.createElement("td", {colSpan: "2"}, " "), 
         React.createElement("td", null, React.createElement("button", {type: "button", className: "new-transaction-submit", onclick: this.submit}, "+"))
       )
     )
@@ -23458,11 +23458,35 @@ module.exports = React.createClass({displayName: "exports",
  */
 
 module.exports = React.createClass({displayName: "exports",
-  deleteRow: function (event) {
-    alert(this.state);
+  deleteRow: function () {
+    var state = this.getInitialState();
+    console.log(state);
+    var _self = this;
+    $.ajax({
+      url: '/api/delete',
+      dataType: 'json',
+      data: {
+        id: state.id
+      },
+      method: 'POST',
+      success: function (resp) {
+        if (Constants.ajax.validateResponse(resp)) {
+          _self.setState(_self.getInitialState());
+          _self.props.onUpdate(resp.transactions);
+          return;
+        }
+        alert('An error occurred and your entry was not deleted.');
+      },
+      error: function () {
+        alert('An error occurred and your entry was not deleted.');
+      },
+      complete: function () {
+        // TODO: hide ajaxclassName="date"
+      }
+    });
   },
   getInitialState: function () {
-    return this.props.transaction;
+    return {id: this.props.transaction._id}
   },
   render: function () {
     var t = this.props.transaction;
@@ -23502,6 +23526,7 @@ module.exports = React.createClass({displayName: "exports",
     this.setState({transactions: transactions});
   },
   render: function() {
+    var _self = this;
     return (
       React.createElement("table", null, 
         React.createElement("thead", null, 
@@ -23520,7 +23545,7 @@ module.exports = React.createClass({displayName: "exports",
         ), 
         React.createElement("tbody", null, 
         this.state.transactions.map(function (row, index) {
-          return React.createElement(Transaction_row, {transaction: row, key: index});
+          return React.createElement(Transaction_row, {transaction: row, onUpdate: _self.onUpdate, key: index});
         }), 
         React.createElement(Transaction_new_row, {onUpdate: this.onUpdate})
         )

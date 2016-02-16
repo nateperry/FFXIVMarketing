@@ -12,6 +12,7 @@ module.exports = React.createClass({
     this.setState({transactions: transactions});
   },
   render: function() {
+    var _self = this;
     return (
       <table>
         <thead>
@@ -30,7 +31,7 @@ module.exports = React.createClass({
         </thead>
         <tbody>
         {this.state.transactions.map(function (row, index) {
-          return <Transaction_row transaction={row} key={index} />;
+          return <Transaction_row transaction={row} onUpdate={_self.onUpdate} key={index} />;
         })}
         <Transaction_new_row onUpdate={this.onUpdate} />
         </tbody>

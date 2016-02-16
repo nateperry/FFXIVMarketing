@@ -3,11 +3,35 @@
  */
 
 module.exports = React.createClass({
-  deleteRow: function (event) {
-    alert(this.state);
+  deleteRow: function () {
+    var state = this.getInitialState();
+    console.log(state);
+    var _self = this;
+    $.ajax({
+      url: '/api/delete',
+      dataType: 'json',
+      data: {
+        id: state.id
+      },
+      method: 'POST',
+      success: function (resp) {
+        if (Constants.ajax.validateResponse(resp)) {
+          _self.setState(_self.getInitialState());
+          _self.props.onUpdate(resp.transactions);
+          return;
+        }
+        alert('An error occurred and your entry was not deleted.');
+      },
+      error: function () {
+        alert('An error occurred and your entry was not deleted.');
+      },
+      complete: function () {
+        // TODO: hide ajaxclassName="date"
+      }
+    });
   },
   getInitialState: function () {
-    return this.props.transaction;
+    return {id: this.props.transaction._id}
   },
   render: function () {
     var t = this.props.transaction;
