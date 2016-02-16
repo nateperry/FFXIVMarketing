@@ -8,6 +8,9 @@ var mongo = require('mongodb');
 var mongoose = require('mongoose');
 var db = mongoose.connect('localhost:27017/ffxiv_marketing');
 
+/**
+ * Establish our routes
+ */
 var routes = require('./routes/index');
 var api = require('./routes/api');
 var users = require('./routes/users');
@@ -28,7 +31,7 @@ app.use(require('node-compass')({mode: 'expanded'}));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Make our db accessible to our router
-app.use(function(req,res,next){
+app.use(function(req,res,next) {
   req.db = db;
   next();
 });

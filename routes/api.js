@@ -21,8 +21,13 @@ router.post('/insert', function (req, res, next) {
       response.data = req.data;
     } else {
       response.result = "OK";
+      // instead of returning only the inserted object, reload the entire list
+      Transaction.find({}, function (err, docs) {
+        if (err) throw err;
+        response.transactions = docs;
+        res.send(response);
+      });
     }
-    res.send(JSON.stringify(response));
   });
 });
 

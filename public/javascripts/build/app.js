@@ -23336,82 +23336,8 @@ module.exports = {
  */
 
 module.exports = React.createClass({displayName: "exports",
-  _cta: null,
-  getInitialState: function () {
-    return ({submitted: false});
-  },
   componentDidMount: function () {
-    var _self = this;
-    this._cta = $('.new-transaction');
-
-    var inputs = this._cta.find('input');
-    inputs.on('focus', function () {
-      $(this).removeClass('invalid')
-    });
-
-    inputs.on('keypress', function (e) {
-      if (e.which == 13) {
-        _self.submit();
-      }
-    });
-  },
-  submit: function () {
-    var _self = this, obj = {};
-    var _invalid = false;
-    $('.new-transaction').find('input').each(function () {
-      var $input = $(this);
-      var val = $input.val().trim();
-      if ($input.prop('required') && val == '') {
-        _invalid = true;
-        $input.addClass('invalid');
-        return;
-      }
-      if ($input.hasClass('date')) {
-        if (val != '') {
-          var date = moment(val, Constants.formats.dates.display);
-          if (!date.isValid()) {
-            _invalid = true;
-            $input.addClass('invalid');
-            return;
-          } else {
-            val = date.unix();
-          }
-        }
-      }
-      obj[$input.attr('name')] = val;
-    });
-
-    if (_invalid) {
-      this._cta.find('input.invalid').first().focus();
-      alert('Missing a required field!');
-      return false;
-    }
-    // now submit the form
-    $.ajax({
-      url: '/api/insert',
-      dataType: 'json',
-      data: obj,
-      method: 'POST',
-      success: function (resp) {
-        console.log(resp);
-        if (resp.result == 'ERR') {
-          if (resp.error.errors) {
-            for (var key in resp.error.errors) {
-              _self._cta.find('input[name='+key+']').addClass('invalid');
-            }
-          }
-        } else if (resp.result == 'OK') {
-          console.log('force update');
-          _self.setState({submitted: true});
-        }
-      },
-      error: function () {
-        alert('An error occurred and your entry was not added');
-      },
-      complete: function () {
-        // TODO: hide ajaxclassName="date"
-      }
-    });
+    console.log('mounting');
   },
   render: function () {
     return (
@@ -23450,9 +23376,9 @@ module.exports = React.createClass({displayName: "exports",
         React.createElement("td", {className: "calc"}, numeral(total_sale_price).format(Constants.formats.numbers.currency)), 
         React.createElement("td", null, moment.unix(t.date_listed).format(Constants.formats.dates.display)), 
         React.createElement("td", null, t.date_sold?moment.unix(t.date_sold).format(Constants.formats.dates.display):''), 
-        React.createElement("td", null, numeral(t.price_sold).format(Constants.formats.numbers.currency)), 
-        React.createElement("td", {className: "calc"}, numeral(tax_rate).format(Constants.formats.numbers.percent)), 
-        React.createElement("td", {className: "calc"}, numeral(tax_amount).format(Constants.formats.numbers.currency))
+        React.createElement("td", null, sold?numeral(t.price_sold).format(Constants.formats.numbers.currency):''), 
+        React.createElement("td", {className: "calc"}, sold?numeral(tax_rate).format(Constants.formats.numbers.percent):''), 
+        React.createElement("td", {className: "calc"}, sold?numeral(tax_amount).format(Constants.formats.numbers.currency):'')
       )
     )
   }
@@ -23463,10 +23389,86 @@ var Transaction_row = require('./Transaction_row.jsx');
 var Transaction_new_row = require('./Transaction_new_row.jsx');
 
 module.exports = React.createClass({displayName: "exports",
-  getInitialState: function () {
+  _cta: null,
+  getInitialState: function (props) {
+    // set initial application state
     return {
-      transactions: JSON.parse(document.getElementById('initial-trans').innerHTML)
+      transactions: props || JSON.parse(document.getElementById('initial-trans').innerHTML) || []
     };
+  },
+  componentWillReceiveProps: function(newProps, oldProps){
+    this.setState(this.getInitialState(newProps));
+  },
+  componentDidMount: function () {
+    var _self = this;
+    this._cta = $('.new-transaction');
+
+    var inputs = this._cta.find('input');
+    inputs.on('focus', function () {
+      $(this).removeClass('invalid')
+    });
+
+    inputs.on('keypress', function (e) {
+      if (e.which == 13) {
+        _self.submit();
+      }
+    });
+  },
+  submit: function () {
+    var _self = this, obj = {};
+    var _invalid = false;
+    this._cta.find('input').each(function () {
+      var $input = $(this);
+      var val = $input.val().trim();
+      if ($input.prop('required') && val == '') {
+        _invalid = true;
+        $input.addClass('invalid');
+        return;
+      }
+      if ($input.hasClass('date')) {
+        if (val != '') {
+          var date = moment(val, Constants.formats.dates.display);
+          if (!date.isValid()) {
+            _invalid = true;
+            $input.addClass('invalid');
+            return;
+          } else {
+            val = date.unix();
+          }
+        }
+      }
+      obj[$input.attr('name')] = val;
+    });
+
+    if (_invalid) {
+      this._cta.find('input.invalid').first().focus();
+      alert('Missing a required field!');
+      return false;
+    }
+    // now submit the form
+    $.ajax({
+      url: '/api/insert',
+      dataType: 'json',
+      data: obj,
+      method: 'POST',
+      success: function (resp) {
+        if (resp.result == 'ERR') {
+          if (resp.error.errors) {
+            for (var key in resp.error.errors) {
+              _self._cta.find('input[name='+key+']').addClass('invalid');
+            }
+          }
+        } else if (resp.result == 'OK') {
+          _self.setState({transactions: resp.transactions});
+        }
+      },
+      error: function () {
+        alert('An error occurred and your entry was not added');
+      },
+      complete: function () {
+        // TODO: hide ajaxclassName="date"
+      }
+    });
   },
   render: function() {
     return (
