@@ -15,11 +15,17 @@ table {
       background-color: $table-calc-bg;
       color: $table-calc-color;
     }
+    &.col-delete {
+      background: $table-calc-bg;
+    }
   }
   tr {
     &.sold {
       background-color: $table-sold-bg;
       color: $table-sold-color;
+    }
+    &.new-transaction {
+      border: 0 !important;
     }
   }
   thead {

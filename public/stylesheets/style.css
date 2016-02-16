@@ -434,9 +434,15 @@ table td.calc {
   background-color: #282826;
   color: #505050;
 }
+table td.col-delete {
+  background: #282826;
+}
 table tr.sold {
   background-color: transparent;
   color: #505050;
+}
+table tr.new-transaction {
+  border: 0 !important;
 }
 table thead {
   background-color: #000;

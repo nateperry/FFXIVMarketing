@@ -3,6 +3,12 @@
  */
 
 module.exports = React.createClass({
+  deleteRow: function (event) {
+    alert(this.state);
+  },
+  getInitialState: function () {
+    return this.props.transaction;
+  },
   render: function () {
     var t = this.props.transaction;
     var total_sale_price = t.price_listed * t.quantity;
@@ -20,6 +26,7 @@ module.exports = React.createClass({
         <td>{sold?numeral(t.price_sold).format(Constants.formats.numbers.currency):''}</td>
         <td className="calc">{sold?numeral(tax_rate).format(Constants.formats.numbers.percent):''}</td>
         <td className="calc">{sold?numeral(tax_amount).format(Constants.formats.numbers.currency):''}</td>
+        <td className="col-delete">{sold?'':<button type="button" onClick={this.deleteRow}>X</button>}</td>
       </tr>
     )
   }
