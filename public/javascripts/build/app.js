@@ -23460,7 +23460,6 @@ module.exports = React.createClass({displayName: "exports",
 module.exports = React.createClass({displayName: "exports",
   deleteRow: function () {
     var state = this.getInitialState();
-    console.log(state);
     var _self = this;
     $.ajax({
       url: '/api/delete',

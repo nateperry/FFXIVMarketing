@@ -34,7 +34,10 @@ var API_Response = {
 router.all('/', function (req, res, next) {
   var err = new Error('Access Not Allowed');
   err.status = 403;
-  next(err);
+  res.render('error', {
+    message: err.message,
+    error: err
+  });
 });
 
 router.post('/insert', function (req, res) {

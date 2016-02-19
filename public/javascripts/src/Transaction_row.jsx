@@ -5,7 +5,6 @@
 module.exports = React.createClass({
   deleteRow: function () {
     var state = this.getInitialState();
-    console.log(state);
     var _self = this;
     $.ajax({
       url: '/api/delete',
