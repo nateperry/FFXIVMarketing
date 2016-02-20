@@ -1,29 +1,29 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var mongo = require('mongodb');
-var mongoose = require('mongoose');
-var db = mongoose.connect('localhost:27017/ffxiv_marketing', {
+/** =======================
+ * Load our packages
+ * =======================*/
+var express         = require('express');
+var path            = require('path');
+var favicon         = require('serve-favicon');
+var logger          = require('morgan');
+var cookieParser    = require('cookie-parser');
+var bodyParser      = require('body-parser');
+var morgan          = require('morgan');
+var mongo           = require('mongodb');
+var mongoose        = require('mongoose');
+var jwt             = require('jsonwebtoken'); // used to create, sign, and verify tokens
+var config          = require('./config'); // get our config file
+var User            = require('./model/user'); // get our mongoose model
+
+/** =======================
+ * Begin Configuration
+ * =======================*/
+var app = express();
+
+var db = mongoose.connect(config.database, {
   server: {socketOptions: {keepAlive: 1, connectTimeoutMS: 30000}},
   replset: {socketOptions: {keepAlive: 1, connectTimeoutMS: 30000}}
 });
 mongoose.connection.on('error', console.error.bind(console, 'connection error:'));
-
-
-
-
-
-/**
- * Establish our routes
- */
-var routes = require('./routes/index');
-var api = require('./routes/api');
-var users = require('./routes/users');
-
-var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -37,6 +37,13 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(require('node-compass')({mode: 'expanded'}));
 app.use(express.static(path.join(__dirname, 'public')));
+
+/** =======================
+ * Establish our routes
+ * =======================*/
+var routes = require('./routes/index');
+var api = require('./routes/api');
+var users = require('./routes/users');
 
 // Make our db accessible to our router
 app.use(function(req, res, next) {
@@ -84,3 +91,4 @@ app.use(function(err, req, res, next) {
 
 
 module.exports = app;
+console.log('Application FFXIV Marketing Started');
