@@ -20,6 +20,7 @@ var transactionSchema = new Schema({
   price_listed: {type: Number, required: true},
   price_sold: Number,
   quantity: {type: Number, required: true},
+  user_id: {type: String, required: true},
   created_at: Number,
   updated_at: Number
 });

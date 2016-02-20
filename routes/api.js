@@ -4,9 +4,9 @@ var express = require('express'),
 var Transaction = require('../model/transaction.js');
 
 var API_Response = {
-  sendSuccessResponse: function (res) {
+  sendSuccessResponse: function (req, res) {
     // instead of returning only the inserted object, reload the entire list
-    Transaction.find({}, function (err, docs) {
+    Transaction.find({user_id: req.user._id}, function (err, docs) {
       var response = {};
       if (err) {
         API_Response.sendErrorResponse(res, "An error occurred while inserting the entry", req, err);
@@ -17,7 +17,7 @@ var API_Response = {
       res.send(response);
     });
   },
-  sendErrorResponse: function (res, msg, req, error) {
+  sendErrorResponse: function (req, res, msg, error) {
     var response = {};
     response.result = "ERR";
     response.message = msg;
@@ -41,26 +41,30 @@ router.all('/', function (req, res, next) {
 });
 
 router.post('/insert', function (req, res) {
+  if (req.body.user_id == undefined) {
+    req.body.user_id = req.user._id;
+  }
+
   var t = new Transaction(req.body);
   t.save(function (err) {
     if (err) {
-      API_Response.sendErrorResponse(res, "An error occurred while inserting the entry", req, err);
+      API_Response.sendErrorResponse(req, res, "An error occurred while inserting the entry", err);
       return;
     }
-    API_Response.sendSuccessResponse(res);
+    API_Response.sendSuccessResponse(req, res);
   });
 });
 
 router.post('/delete', function (req, res) {
   if (!req.body.id) {
-    API_Response.sendErrorResponse(res, "Invalid id submitted.", req);
+    API_Response.sendErrorResponse(req, res, "Invalid id submitted.");
     return;
   }
   Transaction.findOneAndRemove({_id: req.body.id}, function (err) {
     if (err) {
-      API_Response.sendErrorResponse(res, "An error occurred while inserting the entry", req, err);
+      API_Response.sendErrorResponse(req, res, "An error occurred while inserting the entry", err);
     }
-    API_Response.sendSuccessResponse(res);
+    API_Response.sendSuccessResponse(req, res);
   });
 });
 

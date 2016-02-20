@@ -12,8 +12,7 @@ router.get('/', function (req, res, next) {
 
 /* GET home page. */
 router.get('/sales', function (req, res, next) {
-  console.log(req.decoded);
-  Transaction.find({}, function (err, docs) {
+  Transaction.find({user_id: req.user._id}, function (err, docs) {
     if (err) throw err;
     res.render('sales', {
       title: 'Sales',
