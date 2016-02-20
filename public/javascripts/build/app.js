@@ -23337,6 +23337,11 @@ module.exports = {
   ajax: {
     validateResponse: function (resp) {
       if (resp.result == 'ERR') {
+        if (resp.terminate) {
+          // redirect the user id they are signed out
+          alert(resp.message);
+          window.location = '/';
+        }
         return false;
       } else if (resp.result == 'OK') {
         return true;

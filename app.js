@@ -76,7 +76,15 @@ app.use(function (req, res, next) {
       next();
     } else {
       console.log('middleware redirecting to home; not valid user');
-      res.redirect('/');
+      if (req.xhr) {
+        res.send({
+          result: "ERR",
+          message: "Validation Error\n\nYour session may have timed out. You will be redirected to the login in screen.",
+          terminate: true // will trigger a redirect client side
+        })
+      } else {
+        res.redirect('/');
+      }
     }
   });
 });
