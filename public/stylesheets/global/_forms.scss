@@ -1,5 +1,6 @@
-
-input {
+input[type=text],
+input[type=email],
+input[type=password] {
   background-color: transparent;
   border: 0;
   border-bottom: 1px solid $gray-med-1;
@@ -13,5 +14,37 @@ input {
   &.invalid {
     border-color: $alert-red;
     color: $alert-red;
+  }
+}
+
+form {
+  label {
+    display: block;
+    margin-bottom: 15px;
+    .label-text {
+      display: inline-block;
+      width: 150px;
+    }
+  }
+  .form-error {
+    background-color: $alert-red;
+    border: 2px solid darken($alert-red, 10%);
+    padding: 5px 8px;
+  }
+  .form-success {
+    background-color: $alert-green;
+    border: 2px solid darken($alert-green, 10%);
+    padding: 5px 8px;
+  }
+}
+
+@media (min-width: $breakpoint-mobile) {
+  form {
+    input[type=text],
+    input[type=email],
+    input[type=password] {
+      display: inline-block;
+      width: 250px;
+    }
   }
 }

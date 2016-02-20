@@ -1,12 +1,8 @@
+* {
+  @include box-sizing(border-box);
+}
 body {
   background-color: $body-bg;
   color: $body-color;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-  padding: 20px;
-}
-
-.container {
-  margin: 30px auto;
-  max-width: 1400px;
-  width: 100%;
 }

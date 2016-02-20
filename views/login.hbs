@@ -1,0 +1,31 @@
+<div class="container">
+    <div class="grid">
+        <div class="col">
+            <h1>Welcome!</h1>
+            <p>This site was created by @bahumba.</p>
+            <a href="/user/new" class="button button-large">New User</a>
+        </div>
+        <div class="col">
+            <h2>Existing User</h2>
+            <form id="new-user-form" action="/user/authenticate" method="POST" autocomplete="on">
+                {{#if message}}
+                    {{#if success}}
+                        <p class="form-success">{{message}}</p>
+                    {{else}}
+                        <p class="form-error">{{message}}</p>
+                    {{/if}}
+                {{/if}}
+                <label for="user-email">
+                    <span class="label-text">Email</span>
+                    <input id="user-email" name="email" type="email" autofocus />
+                </label>
+                <label for="user-password">
+                    <span class="label-text">Password</span>
+                    <input id="user-password" name="password" type="password" />
+                </label>
+                <input type="submit" value="Submit" class="button-large" />
+            </form>
+        </div>
+    </div>
+
+</div>

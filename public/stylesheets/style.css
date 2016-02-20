@@ -396,17 +396,90 @@ th {
   padding: 0;
 }
 
+.container {
+  max-width: 940px;
+  margin-right: auto;
+  margin-left: auto;
+  padding: 0 10px;
+}
+
+@media (min-width: 600px) {
+  .container {
+    padding: 0;
+  }
+
+  .grid {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+  }
+
+  .col {
+    display: table-cell;
+  }
+
+  .grid-padded {
+    margin-left: -1rem;
+    margin-right: -1rem;
+  }
+  .grid-padded .grid {
+    border-spacing: 1rem 0;
+  }
+
+  .col-1 {
+    width: 8.333333%;
+  }
+
+  .col-2 {
+    width: 16.666667%;
+  }
+
+  .col-3 {
+    width: 25%;
+  }
+
+  .col-4 {
+    width: 33.333333%;
+  }
+
+  .col-5 {
+    width: 41.666667%;
+  }
+
+  .col-6 {
+    width: 50%;
+  }
+
+  .col-7 {
+    width: 58.333333%;
+  }
+
+  .col-8 {
+    width: 66.666667%;
+  }
+
+  .col-9 {
+    width: 75%;
+  }
+
+  .col-10 {
+    width: 83.333333%;
+  }
+
+  .col-11 {
+    width: 91.666667%;
+  }
+}
+* {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
 body {
   background-color: #232321;
   color: #ffffff;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-  padding: 20px;
-}
-
-.container {
-  margin: 30px auto;
-  max-width: 1400px;
-  width: 100%;
 }
 
 a {
@@ -472,23 +545,56 @@ table tbody tr:last-child td:last-child, table tbody tr:last-child th:last-child
   border-radius: 0 0 6px 0;
 }
 
-input {
+input[type=text],
+input[type=email],
+input[type=password] {
   background-color: transparent;
   border: 0;
   border-bottom: 1px solid #bfbfbf;
   padding: 2px 4px;
   width: 100%;
 }
-input:focus {
+input[type=text]:focus,
+input[type=email]:focus,
+input[type=password]:focus {
   border-color: #bb7619;
   color: #bb7619;
   outline: none;
 }
-input.invalid {
+input[type=text].invalid,
+input[type=email].invalid,
+input[type=password].invalid {
   border-color: #ae2d07;
   color: #ae2d07;
 }
 
+form label {
+  display: block;
+  margin-bottom: 15px;
+}
+form label .label-text {
+  display: inline-block;
+  width: 150px;
+}
+form .form-error {
+  background-color: #ae2d07;
+  border: 2px solid #7d2005;
+  padding: 5px 8px;
+}
+form .form-success {
+  background-color: #489413;
+  border: 2px solid #32670d;
+  padding: 5px 8px;
+}
+
+@media (min-width: 600px) {
+  form input[type=text],
+  form input[type=email],
+  form input[type=password] {
+    display: inline-block;
+    width: 250px;
+  }
+}
 button,
 a.button,
 input[type=button],
@@ -498,4 +604,12 @@ input[type=submit] {
   border: 0;
   color: #553100;
   font-weight: 700;
+}
+
+button.button-large,
+a.button.button-large,
+input[type=button].button-large,
+input[type=reset].button-large,
+input[type=submit].button-large {
+  padding: 8px 10px;
 }

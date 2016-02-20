@@ -3,11 +3,15 @@ var router = express.Router();
 
 var Transaction = require('../model/transaction.js');
 
+router.get('/', function (req, res, next) {
+  res.render('dashboard');
+});
+
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/sales', function (req, res, next) {
   Transaction.find({}, function (err, docs) {
     if (err) throw err;
-    res.render('index', { title: 'FFXIV Marketing', transactions: JSON.stringify(docs) });
+    res.render('sales', {transactions: JSON.stringify(docs)});
   });
 });
 

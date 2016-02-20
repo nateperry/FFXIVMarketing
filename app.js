@@ -25,6 +25,9 @@ var db = mongoose.connect(config.database, {
 });
 mongoose.connection.on('error', console.error.bind(console, 'connection error:'));
 
+// secret variable
+app.set('superSecret', config.secret);
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
@@ -41,7 +44,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 /** =======================
  * Establish our routes
  * =======================*/
-var routes = require('./routes/index');
+var dashboard = require('./routes/dashboard');
 var api = require('./routes/api');
 var users = require('./routes/users');
 
@@ -57,9 +60,36 @@ app.use(function(req, res, next) {
   next();
 });
 
-app.use('/', routes);
+app.use('/', users);
+
+/** =======================
+ * Route middleware to authenticate and check token
+ * =======================*/
+app.use(function (req, res, next) {
+  // check header or url parameters or post parameters for token
+  var token = req.body.token || req.query.token || req.headers['x-access-token'];
+  console.log(token);
+  // decode token
+  if (token) {
+    // verifies secret and checks exp
+    jwt.verify(token, app.get('superSecret'), function(err, decoded) {
+      if (err) {
+        return res.redirect('/');
+      } else {
+        // if everything is good, save to request for use in other routes
+        req.decoded = decoded;
+        next();
+      }
+    });
+  } else {
+    // if there is no token
+    // redirect to homepage
+    return res.redirect('/');
+  }
+});
+
+app.use('/app', dashboard);
 app.use('/api', api);
-app.use('/users', users);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
