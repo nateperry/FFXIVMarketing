@@ -1,9 +1,9 @@
 var express = require('express');
 var router = express.Router();
-
 var Transaction = require('../model/transaction.js');
 
 router.get('/', function (req, res, next) {
+  console.log('loading dashboard');
   res.render('dashboard');
 });
 

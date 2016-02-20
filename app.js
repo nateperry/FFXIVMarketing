@@ -7,12 +7,13 @@ var favicon         = require('serve-favicon');
 var logger          = require('morgan');
 var cookieParser    = require('cookie-parser');
 var bodyParser      = require('body-parser');
+var jwt             = require('jsonwebtoken'); // used to create, sign, and verify tokens
 var morgan          = require('morgan');
 var mongo           = require('mongodb');
 var mongoose        = require('mongoose');
-var jwt             = require('jsonwebtoken'); // used to create, sign, and verify tokens
 var config          = require('./config'); // get our config file
 var User            = require('./model/user'); // get our mongoose model
+var utils           = require('./utils');
 
 /** =======================
  * Begin Configuration
@@ -61,36 +62,24 @@ app.use(function(req, res, next) {
 });
 
 app.use('/', users);
-
 /** =======================
  * Route middleware to authenticate and check token
  * =======================*/
 app.use(function (req, res, next) {
-  // check header or url parameters or post parameters for token
-  var token = req.body.token || req.query.token || req.headers['x-access-token'];
-  console.log(token);
-  // decode token
-  if (token) {
-    // verifies secret and checks exp
-    jwt.verify(token, app.get('superSecret'), function(err, decoded) {
-      if (err) {
-        return res.redirect('/');
-      } else {
-        // if everything is good, save to request for use in other routes
-        req.decoded = decoded;
-        next();
-      }
-    });
-  } else {
-    // if there is no token
-    // redirect to homepage
-    return res.redirect('/');
-  }
-});
+  console.log('middleware trigger');
 
+  utils.isValidUser(req, function (valid) {
+    if (valid) {
+      console.log('middleware next; valid user');
+      next();
+    } else {
+      console.log('middleware redirecting to home; not valid user');
+      res.redirect('/');
+    }
+  });
+});
 app.use('/app', dashboard);
 app.use('/api', api);
-
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
