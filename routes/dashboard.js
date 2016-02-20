@@ -3,6 +3,7 @@ var router = express.Router();
 var Transaction = require('../model/transaction.js');
 
 router.get('/', function (req, res, next) {
+  req.app.set("view options", { layout: "layout-app.hbs" });
   console.log('loading dashboard');
   res.render('dashboard', {
     title: 'Dashboard',

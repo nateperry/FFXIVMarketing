@@ -7,12 +7,13 @@ var utils = require('../utils');
 
 // load the homepage
 router.get('/', function(req, res, next) {
+  req.app.set("view options", { layout: "layout.hbs" });
   utils.isValidUser(req, function (valid) {
     if (valid) {
       console.log('user already signed in');
       return res.redirect('/app');
     } else {
-      console.log('user decided usier is not vlaid');
+      console.log('user decided user is not valid');
       return res.render('login');
     }
   });
@@ -21,6 +22,11 @@ router.get('/', function(req, res, next) {
 // displays new user form
 router.get('/user/new', function(req, res, next) {
   return res.render('new-user');
+});
+
+router.get('/user/logout', function (req, res, next) {
+  res.cookie(req.app.get('cookieName'), '');
+  res.redirect('/');
 });
 
 // handles a new user request
@@ -64,7 +70,7 @@ router.post('/user/authenticate', function(req, res) {
           expiresIn: "36h" // expires in 36 hours
         });
         // set the cookie
-        res.cookie('ffxiv_user', token, {maxAge: 129600000}); // set cookie for 36 hours
+        res.cookie(req.app.get('cookieName'), token, {maxAge: 129600000}); // set cookie for 36 hours
         console.log('cookie set');
         // return the information including token as JSON
         return res.redirect('/app');

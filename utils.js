@@ -8,7 +8,7 @@ var jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
 
 function isValidUser (req, callback) {
   // check header or url parameters or post parameters for token
-  var token = req.cookies.ffxiv_user;
+  var token = req.cookies[req.app.get('cookieName')];
   // decode token
   if (token) {
     // verifies secret and checks exp

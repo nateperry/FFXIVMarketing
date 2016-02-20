@@ -29,6 +29,7 @@ mongoose.connection.on('error', console.error.bind(console, 'connection error:')
 
 // secret variable
 app.set('superSecret', config.secret);
+app.set('cookieName', config.cookieName);
 
 // view engine setup
 hbs.registerPartials(__dirname + '/views/partials');
@@ -72,7 +73,6 @@ app.use(function (req, res, next) {
   utils.isValidUser(req, function (valid) {
     if (valid) {
       console.log('middleware next; valid user');
-      req.app.set("view options", { layout: "layout-app.hbs" });
       next();
     } else {
       console.log('middleware redirecting to home; not valid user');
