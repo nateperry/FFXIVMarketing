@@ -4,14 +4,22 @@ var Transaction = require('../model/transaction.js');
 
 router.get('/', function (req, res, next) {
   console.log('loading dashboard');
-  res.render('dashboard');
+  res.render('dashboard', {
+    title: 'Dashboard',
+    user: req.user
+  });
 });
 
 /* GET home page. */
 router.get('/sales', function (req, res, next) {
+  console.log(req.decoded);
   Transaction.find({}, function (err, docs) {
     if (err) throw err;
-    res.render('sales', {transactions: JSON.stringify(docs)});
+    res.render('sales', {
+      title: 'Sales',
+      user: req.user,
+      transactions: JSON.stringify(docs)
+    });
   });
 });
 

@@ -613,3 +613,20 @@ input[type=reset].button-large,
 input[type=submit].button-large {
   padding: 8px 10px;
 }
+
+.header {
+  background: #000;
+  padding: 15px 0;
+}
+
+.align-left {
+  text-align: left;
+}
+
+.align-right {
+  text-align: right;
+}
+
+.align-center {
+  text-align: center;
+}

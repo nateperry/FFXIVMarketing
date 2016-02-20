@@ -21,7 +21,7 @@ function isValidUser (req, callback) {
       } else {
         // if everything is good, save to request for use in other routes
         console.log('VALID USER');
-        req.decoded = decoded;
+        req.user = decoded._doc;
         callback.call(null, true);
         return true;
       }

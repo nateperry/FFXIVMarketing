@@ -61,10 +61,10 @@ router.post('/user/authenticate', function(req, res) {
         // if user is found and password is right
         // create a token
         var token = jwt.sign(user, req.app.get('superSecret'), {
-          expiresIn: "36h" // expires in 24 hours
+          expiresIn: "36h" // expires in 36 hours
         });
         // set the cookie
-        res.cookie('ffxiv_user', token, {maxAge: 90000});
+        res.cookie('ffxiv_user', token, {maxAge: 129600000}); // set cookie for 36 hours
         console.log('cookie set');
         // return the information including token as JSON
         return res.redirect('/app');

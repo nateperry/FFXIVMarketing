@@ -7,6 +7,7 @@ var favicon         = require('serve-favicon');
 var logger          = require('morgan');
 var cookieParser    = require('cookie-parser');
 var bodyParser      = require('body-parser');
+var hbs             = require('hbs');
 var jwt             = require('jsonwebtoken'); // used to create, sign, and verify tokens
 var morgan          = require('morgan');
 var mongo           = require('mongodb');
@@ -30,6 +31,7 @@ mongoose.connection.on('error', console.error.bind(console, 'connection error:')
 app.set('superSecret', config.secret);
 
 // view engine setup
+hbs.registerPartials(__dirname + '/views/partials');
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
@@ -67,10 +69,10 @@ app.use('/', users);
  * =======================*/
 app.use(function (req, res, next) {
   console.log('middleware trigger');
-
   utils.isValidUser(req, function (valid) {
     if (valid) {
       console.log('middleware next; valid user');
+      req.app.set("view options", { layout: "layout-app.hbs" });
       next();
     } else {
       console.log('middleware redirecting to home; not valid user');
@@ -80,6 +82,7 @@ app.use(function (req, res, next) {
 });
 app.use('/app', dashboard);
 app.use('/api', api);
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
