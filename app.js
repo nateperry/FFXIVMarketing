@@ -1,3 +1,5 @@
+// establish our environment
+var env = process.env.NODE_ENV || 'development';
 /** =======================
  * Load our packages
  * =======================*/
@@ -42,7 +44,9 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
-//app.use(require('node-compass')({mode: 'expanded'}));
+if (env == 'development') {
+  app.use(require('node-compass')({mode: 'expanded'}));
+}
 app.use(express.static(path.join(__dirname, 'public')));
 
 /** =======================
