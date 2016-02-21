@@ -7,6 +7,6 @@ module.exports = {
   "production": {
     'cookieName': 'ffxiv_marketing',
     'secret': 'b12079u149hsdfjlah092',
-    'database': 'mongodb://admin:!pewpew1092@ds013848.mongolab.com:13848/heroku_bn164dwf'
+    'database': process.env.MONGOLAB_URI
   }
 };
