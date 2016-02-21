@@ -1,12 +1,18 @@
 # FFXIVMarketing
 
 ### Setup
-Four separate console windows.
 
+Run this command from the project root.
 ```bash
 % npm install
+```
+
+Then each of these commands will need to be run from the project root.
+```bash
 % nodemon bin/www
-% mongod --dbpath PATH_TO_DATA_FOLDER
-% mongo
-% db.transactions.insert({"name": "Weak Silencing Potion","price_listed": 450000000,"price_sold": 1283,"quantity": 3,"date_listed": 1451088000,"date_sold": 1451088000})
+% gulp
+
+To start up MongoDB, run this from your `MongoDB/bin` folder wherever that may be.
+```bash
+% mongod --dbpath PATH_TO_DATA_FOLDER ex: mongod --dbpath C:\Users\bahum\Projects\FFXIVMarketing\data\
 ```
