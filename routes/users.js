@@ -2,6 +2,7 @@ var express = require('express');
 var app = express();
 var router = express.Router();
 var jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
+var bcrypt = require('bcrypt-nodejs');
 var User = require('../model/user');
 var utils = require('../utils');
 
@@ -52,18 +53,17 @@ router.post('/user/new', function(req, res, next) {
 
 // attempts to login a user
 router.post('/user/authenticate', function(req, res) {
+  var errorMessage = 'Authentication failed. Email and/or password may be wrong.';
   // find the user
   User.findOne({
     email: req.body.email
   }, function(err, user) {
     if (err) throw err;
     if (!user) {
-      return res.render('login', {success: false, message: 'Authentication failed. Email and/or password may be wrong.' });
+      return res.render('login', {success: false, message: errorMessage });
     } else if (user) {
       // check if password matches
-      if (user.password != req.body.password) {
-        return res.render('login', {success: false, message: 'Authentication failed. Email and/or password may be wrong.' });
-      } else {
+      if (bcrypt.compareSync(req.body.password, user.password)) {
         // if user is found and password is right
         // create a token
         var token = jwt.sign(user, req.app.get('superSecret'), {
@@ -75,6 +75,7 @@ router.post('/user/authenticate', function(req, res) {
         // return the information including token as JSON
         return res.redirect('/app');
       }
+      return res.render('login', {success: false, message: errorMessage });
     }
   });
 });

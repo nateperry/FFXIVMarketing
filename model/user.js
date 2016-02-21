@@ -1,6 +1,7 @@
 // get an instance of mongoose and mongoose.Schema
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+var bcrypt = require('bcrypt-nodejs');
 
 
 var userSchema = new Schema({
@@ -16,6 +17,13 @@ var userSchema = new Schema({
 userSchema.pre('save', function(next) {
   // get the current date
   var currentDate = new Date().getTime();
+
+  // hash the password
+  if (this.isModified('password')) {
+    console.log('passed in pass', this.password);
+    this.password = bcrypt.hashSync(this.password);
+    console.log('hashed pass', this.password);
+  }
 
   // change the updated_at field to current date
   this.updated_at = currentDate;
