@@ -11,6 +11,7 @@ Then each of these commands will need to be run from the project root.
 ```bash
 % nodemon bin/www
 % gulp
+```
 
 To start up MongoDB, run this from your `MongoDB/bin` folder wherever that may be.
 ```bash
