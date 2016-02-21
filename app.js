@@ -14,7 +14,7 @@ var jwt             = require('jsonwebtoken'); // used to create, sign, and veri
 var morgan          = require('morgan');
 var mongo           = require('mongodb');
 var mongoose        = require('mongoose');
-var config          = require('./config')['production']; // get our config file
+var config          = require('./config')[env]; // get our config file
 var User            = require('./model/user'); // get our mongoose model
 var utils           = require('./utils');
 
