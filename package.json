@@ -27,6 +27,6 @@
   },
   "devDependencies": {
     "gulp": "^3.9.0",
-    "node-compass": "^0.2.3",
+    "node-compass": "^0.2.3"
   }
 }
