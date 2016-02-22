@@ -17,12 +17,9 @@ var userSchema = new Schema({
 userSchema.pre('save', function(next) {
   // get the current date
   var currentDate = new Date().getTime();
-
   // hash the password
   if (this.isModified('password')) {
-    console.log('passed in pass', this.password);
     this.password = bcrypt.hashSync(this.password);
-    console.log('hashed pass', this.password);
   }
 
   // change the updated_at field to current date

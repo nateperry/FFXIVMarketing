@@ -4,10 +4,13 @@
 
 // Holds and centers the site content
 .container {
-  max-width: 940px;
+  max-width: 960px;
   margin-right: auto;
   margin-left: auto;
   padding: 0 10px;
+  &.container-large {
+    max-width: 1060px;
+  }
 }
 
 //
@@ -15,20 +18,22 @@
 //
 
 @media (min-width: $breakpoint-mobile) {
-  .container {
-    padding: 0;
-  }
-
   // Add `.grid` for the table
   .grid {
     display: table;
     width: 100%;
     table-layout: fixed;
+    &.grid-align-middle {
+      .col {
+        vertical-align: middle;
+      }
+    }
   }
 
   // Add `.col` for the table cells, or columns
   .col {
     display: table-cell;
+    vertical-align: top;
   }
 
   // Padded columns

@@ -20,14 +20,11 @@ router.get('/', function(req, res, next) {
   });
 });
 
-// displays new user form
+/**
+ * New User
+ */
 router.get('/user/new', function(req, res, next) {
   return res.render('new-user');
-});
-
-router.get('/user/logout', function (req, res, next) {
-  res.cookie(req.app.get('cookieName'), '');
-  res.redirect('/');
 });
 
 // handles a new user request
@@ -51,6 +48,42 @@ router.post('/user/new', function(req, res, next) {
   });
 });
 
+/**
+ * Logout
+ */
+router.get('/user/logout', function (req, res, next) {
+  res.cookie(req.app.get('cookieName'), '');
+  res.redirect('/');
+});
+
+/**
+ * Password Reset
+ */
+
+router.get('/user/reset', function (req, res, next) {
+  res.render('password-reset');
+});
+
+router.post('/user/reset', function (req, res, next) {
+  var errorMessage = 'No user with that email was found.';
+  User.findOne({
+    email: req.body.email
+  }, function(err, user) {
+    if (err) throw err;
+    if (!user) {
+      return res.render('password-reset', {success: false, message: errorMessage });
+    } else if (user) {
+      var pass = utils.getRandomString();
+      User.update({_id: user._id}, {password: bcrypt.hashSync(pass)}, {}, function () {
+        return res.render('password-reset', {success: true, email:user.email });
+      });
+    }
+  });
+});
+
+/**
+ * User Authentication
+ */
 // attempts to login a user
 router.post('/user/authenticate', function(req, res) {
   var errorMessage = 'Authentication failed. Email and/or password may be wrong.';

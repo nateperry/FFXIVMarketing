@@ -397,25 +397,28 @@ th {
 }
 
 .container {
-  max-width: 940px;
+  max-width: 960px;
   margin-right: auto;
   margin-left: auto;
   padding: 0 10px;
 }
+.container.container-large {
+  max-width: 1060px;
+}
 
 @media (min-width: 600px) {
-  .container {
-    padding: 0;
-  }
-
   .grid {
     display: table;
     width: 100%;
     table-layout: fixed;
   }
+  .grid.grid-align-middle .col {
+    vertical-align: middle;
+  }
 
   .col {
     display: table-cell;
+    vertical-align: top;
   }
 
   .grid-padded {
@@ -602,6 +605,7 @@ input[type=reset],
 input[type=submit] {
   background-color: #bb7619;
   border: 0;
+  display: inline-block;
   color: #553100;
   font-weight: 700;
 }
@@ -617,6 +621,31 @@ input[type=submit].button-large {
 .header {
   background: #000;
   padding: 15px 0;
+}
+
+p {
+  margin: 0 0 15px;
+}
+
+hr {
+  background-color: #000;
+  border: 0;
+  display: block;
+  height: 1px;
+  margin: 10px 0;
+  width: 100%;
+}
+hr.hr-small {
+  margin: 5px 0;
+}
+hr.hr-medium {
+  margin: 10px 0;
+}
+hr.hr-large {
+  margin: 15px 0;
+}
+hr.hr-x-large {
+  margin: 20px 0;
 }
 
 .align-left {

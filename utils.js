@@ -30,3 +30,17 @@ function isValidUser (req, callback) {
   }
 }
 exports.isValidUser = isValidUser;
+
+function getRandomString (charLength) {
+  if (charLength == undefined) {
+    charLength = 8;
+  }
+  var text = "", possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  for( var i=0; i < charLength; i++ ) {
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+  }
+  return text;
+}
+exports.getRandomString = getRandomString;
+
+exports
