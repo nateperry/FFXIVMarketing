@@ -19,6 +19,7 @@
     "mongodb": "^2.1.4",
     "mongoose": "^4.3.7",
     "morgan": "^1.6.1",
+    "nodemailer": "^2.2.1",
     "numeral": "^1.5.3",
     "react": "^0.14.6",
     "react-dom": "^0.14.6",

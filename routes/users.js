@@ -74,8 +74,17 @@ router.post('/user/reset', function (req, res, next) {
       return res.render('password-reset', {success: false, message: errorMessage });
     } else if (user) {
       var pass = utils.getRandomString();
-      User.update({_id: user._id}, {password: bcrypt.hashSync(pass)}, {}, function () {
-        return res.render('password-reset', {success: true, email:user.email });
+      User.update({_id: user._id}, {password: bcrypt.hashSync(pass)}, {}, function (err) {
+        if (err) {
+          return res.render('password-reset', {success: false, message: 'An error occurred, and your password was not reset correctly. Please try again.' });
+        }
+        var Emailer = require('../utilities/emailer');
+        Emailer.sendPasswordReset(user.email, pass, function (success) {
+          if (success) {
+            return res.render('password-reset', {success: true, email:user.email});
+          }
+          return res.render('password-reset', {success: false, message:'An error occurred while sending you an email. Please try again.'});
+        });
       });
     }
   });
