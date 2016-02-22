@@ -10,12 +10,10 @@ var logger          = require('morgan');
 var cookieParser    = require('cookie-parser');
 var bodyParser      = require('body-parser');
 var hbs             = require('hbs');
-var jwt             = require('jsonwebtoken'); // used to create, sign, and verify tokens
 var morgan          = require('morgan');
 var mongo           = require('mongodb');
 var mongoose        = require('mongoose');
 var config          = require('./config')[env]; // get our config file
-var User            = require('./model/user'); // get our mongoose model
 var utils           = require('./utils');
 
 /** =======================
@@ -73,13 +71,11 @@ app.use('/', users);
  * Route middleware to authenticate and check token
  * =======================*/
 app.use(function (req, res, next) {
-  console.log('middleware trigger');
   utils.isValidUser(req, function (valid) {
     if (valid) {
-      console.log('middleware next; valid user');
+      req.app.set("view options", { layout: "layout-app.hbs" });
       next();
     } else {
-      console.log('middleware redirecting to home; not valid user');
       if (req.xhr) {
         res.send({
           result: "ERR",

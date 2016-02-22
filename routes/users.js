@@ -1,7 +1,6 @@
 var express = require('express');
 var app = express();
 var router = express.Router();
-var jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
 var bcrypt = require('bcrypt-nodejs');
 var User = require('../model/user');
 var utils = require('../utils');
@@ -11,10 +10,8 @@ router.get('/', function(req, res, next) {
   req.app.set("view options", { layout: "layout.hbs" });
   utils.isValidUser(req, function (valid) {
     if (valid) {
-      console.log('user already signed in');
       return res.redirect('/app');
     } else {
-      console.log('user decided user is not valid');
       return res.render('login');
     }
   });
@@ -52,7 +49,7 @@ router.post('/user/new', function(req, res, next) {
  * Logout
  */
 router.get('/user/logout', function (req, res, next) {
-  res.cookie(req.app.get('cookieName'), '');
+  utils.clearToken(req, res);
   res.redirect('/');
 });
 
@@ -68,9 +65,9 @@ router.post('/user/reset', function (req, res, next) {
   var errorMessage = 'No user with that email was found.';
   User.findOne({
     email: req.body.email
-  }, function(err, user) {
-    if (err) throw err;
-    if (!user) {
+  },
+  function(err, user) {
+    if (!user || err) {
       return res.render('password-reset', {success: false, message: errorMessage });
     } else if (user) {
       var pass = utils.getRandomString();
@@ -108,12 +105,7 @@ router.post('/user/authenticate', function(req, res) {
       if (bcrypt.compareSync(req.body.password, user.password)) {
         // if user is found and password is right
         // create a token
-        var token = jwt.sign(user, req.app.get('superSecret'), {
-          expiresIn: "36h" // expires in 36 hours
-        });
-        // set the cookie
-        res.cookie(req.app.get('cookieName'), token, {maxAge: 129600000}); // set cookie for 36 hours
-        console.log('cookie set');
+        utils.setToken(req, res, user);
         // return the information including token as JSON
         return res.redirect('/app');
       }

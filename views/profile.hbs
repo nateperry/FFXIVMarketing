@@ -1,0 +1,36 @@
+<div class="container">
+    <div class="grid-padded">
+        <div class="grid">
+            <div class="col">
+                <h1>My Profile</h1>
+                <form id="user-profile-form" autocomplete="off" method="POST">
+                    {{#if errors}}
+                        {{#each errors}}
+                            <p class="form-error">{{this}}</p>
+                        {{/each}}
+                    {{else if success}}
+                        <p class="form-success">Your changes have been saved successfully!</p>
+                    {{/if}}
+                    <input type="hidden" name="user_id" value="{{user._id}}" />
+                    <label for="user-email">
+                        <span class="label-text">Email</span>
+                        <input id="user-email" name="email" type="email" value="{{user.email}}" autofocus />
+                    </label>
+                    <h3>Change Password</h3>
+                    <label for="user-password">
+                        <span class="label-text">New Password</span>
+                        <input id="user-password" name="password" type="password" />
+                    </label>
+                    <label for="user-conf-password">
+                        <span class="label-text">Confirm Password</span>
+                        <input id="user-conf-password" name="conf_password" type="password" />
+                    </label>
+                    <input class="button-large" type="submit" value="Save Changes">
+                </form>
+            </div>
+            <div class="col">
+
+            </div>
+        </div>
+    </div>
+</div>
