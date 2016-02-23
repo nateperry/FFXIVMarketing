@@ -18,6 +18,7 @@ module.exports = React.createClass({
         <thead>
         <tr>
           <th>Item</th>
+          <th>HQ</th>
           <th>Price</th>
           <th>Quantity</th>
           <th>Sale Price</th>

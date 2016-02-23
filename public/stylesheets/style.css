@@ -396,6 +396,10 @@ th {
   padding: 0;
 }
 
+#main {
+  margin: 25px 0;
+}
+
 .container {
   max-width: 960px;
   margin-right: auto;

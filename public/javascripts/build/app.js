@@ -23363,6 +23363,7 @@ module.exports = React.createClass({displayName: "exports",
       name: '',
       price_listed: '',
       quantity: '',
+      high_quality: false,
       date_listed: moment().format(Constants.formats.dates.display),
       date_sold: '',
       price_sold: ''
@@ -23373,12 +23374,13 @@ module.exports = React.createClass({displayName: "exports",
 
     this._cta = $('.new-transaction');
 
-    var inputs = this._cta.find('input');
-    inputs.on('focus', function () {
+    var $inputs = this._cta.find('input');
+
+    $inputs.on('focus', function () {
       $(this).removeClass('invalid')
     });
 
-    inputs.on('keypress', function (e) {
+    $inputs.on('keypress', function (e) {
       if (e.which == 13) {
         _self.submit();
       }
@@ -23388,22 +23390,26 @@ module.exports = React.createClass({displayName: "exports",
     var _self = this, obj = {};
     var _invalid = false;
     this._cta.find('input').each(function () {
-      var $input = $(this);
-      var val = $input.val().trim();
-      if ($input.prop('required') && val == '') {
-        _invalid = true;
-        $input.addClass('invalid');
-        return;
-      }
-      if ($input.hasClass('date')) {
-        if (val != '') {
-          var date = moment(val, Constants.formats.dates.display);
-          if (!date.isValid()) {
-            _invalid = true;
-            $input.addClass('invalid');
-            return;
-          } else {
-            val = date.unix();
+      var $input = $(this), val;
+      if ($input.attr('type') == 'checkbox') {
+        val = $input.prop('checked');
+      } else {
+        val = $input.val().trim();
+        if ($input.prop('required') && val == '') {
+          _invalid = true;
+          $input.addClass('invalid');
+          return;
+        }
+        if ($input.hasClass('date')) {
+          if (val != '') {
+            var date = moment(val, Constants.formats.dates.display);
+            if (!date.isValid()) {
+              _invalid = true;
+              $input.addClass('invalid');
+              return;
+            } else {
+              val = date.unix();
+            }
           }
         }
       }
@@ -23425,6 +23431,7 @@ module.exports = React.createClass({displayName: "exports",
         if (Constants.ajax.validateResponse(resp)) {
           _self.setState(_self.getInitialState());
           _self.props.onUpdate(resp.transactions);
+          _self._cta.find('input[name=name]').focus();
           return;
         }
         if (resp.error.errors) {
@@ -23441,15 +23448,21 @@ module.exports = React.createClass({displayName: "exports",
       }
     });
   },
+  handleCheck: function (event) {
+    var obj = {};
+    obj[event.target.name] = event.target.checked;
+    this.setState(obj);
+  },
   handleChange: function(event) {
     var obj = {};
-    obj[event.target.name] = event.target.value;
+    obj[event.target.name] = event.target.value.trim();
     this.setState(obj);
   },
   render: function () {
     return (
       React.createElement("tr", {className: "new-transaction"}, 
         React.createElement("td", null, React.createElement("input", {type: "text", name: "name", value: this.state.name, onChange: this.handleChange, required: true})), 
+        React.createElement("td", null, React.createElement("input", {type: "checkbox", name: "high_quality", checked: this.state.high_quality, onChange: this.handleCheck})), 
         React.createElement("td", null, React.createElement("input", {type: "text", name: "price_listed", value: this.state.price_listed, onChange: this.handleChange, required: true})), 
         React.createElement("td", null, React.createElement("input", {type: "text", name: "quantity", value: this.state.quantity, onChange: this.handleChange, required: true})), 
         React.createElement("td", null, " "), 
@@ -23507,6 +23520,7 @@ module.exports = React.createClass({displayName: "exports",
     return (
       React.createElement("tr", {className: (sold)?'sold':''}, 
         React.createElement("td", null, t.name), 
+        React.createElement("td", null, t.high_quality?'X':''), 
         React.createElement("td", null, numeral(t.price_listed).format(Constants.formats.numbers.currency)), 
         React.createElement("td", null, numeral(t.quantity).format()), 
         React.createElement("td", {className: "calc"}, numeral(total_sale_price).format(Constants.formats.numbers.currency)), 
@@ -23542,6 +23556,7 @@ module.exports = React.createClass({displayName: "exports",
         React.createElement("thead", null, 
         React.createElement("tr", null, 
           React.createElement("th", null, "Item"), 
+          React.createElement("th", null, "HQ"), 
           React.createElement("th", null, "Price"), 
           React.createElement("th", null, "Quantity"), 
           React.createElement("th", null, "Sale Price"), 
