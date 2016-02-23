@@ -60,3 +60,13 @@ exports.setToken = function (req, res, user) {
   res.cookie(req.app.get('cookieName'), token, {maxAge: 129600000}); // set cookie for 36 hours
   console.log('cookie set');
 };
+
+exports.getCleanUser = function (user) {
+  var clean = user;
+  clean['password'] = null;
+  clean['new_password'] = '';
+  clean['conf_password'] = '';
+  console.log('clean =', clean);
+  console.log('user =', user);
+  return clean;
+};

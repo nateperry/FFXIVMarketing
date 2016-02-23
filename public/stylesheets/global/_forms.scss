@@ -18,6 +18,12 @@ input[type=password] {
 }
 
 form {
+  h3 {
+    margin-top: 35px;
+    &:first-child {
+      margin-top: 0;
+    }
+  }
   label {
     display: block;
     margin-bottom: 15px;

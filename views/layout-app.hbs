@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>{{title}} | FFXIV Marketing</title>
-    {{> headRequired}}
+    {{> headRequired }}
 </head>
 <body>
 {{> header}}
@@ -12,7 +12,10 @@
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.0/jquery.js"></script>
 {{#if transactions}}
     <script id="initial-trans" type="application/json">{{{transactions}}}</script>
-    <script type="text/javascript" src="/javascripts/build/app.js"></script>
 {{/if}}
+{{#if userJSON}}
+    <script id="user-object" type="application/json">{{{userJSON}}}</script>
+{{/if}}
+<script type="text/javascript" src="/javascripts/build/app.js"></script>
 </body>
 </html>

@@ -23352,6 +23352,164 @@ module.exports = {
 };
 
 },{}],162:[function(require,module,exports){
+
+var Characters = require('./Profile_Characters.jsx');
+
+module.exports = React.createClass({displayName: "exports",
+  getInitialState: function () {
+    return JSON.parse(document.getElementById('user-object').innerHTML) || {};
+  },
+  handleChange: function(event) {
+    this.state[event.target.name] = event.target.value.trim();
+    this.setState(this.state);
+  },
+  passwordsMatch: function () {
+    return (this.state.new_password == this.state.conf_password);
+  },
+  render: function () {
+    var _self = this;
+    var user = this.state;
+    return (
+      React.createElement("div", null, 
+        React.createElement("h3", null, "Account Info"), 
+        React.createElement("label", {htmlFor: "user-email"}, 
+          React.createElement("span", {className: "label-text"}, "Email"), 
+          React.createElement("input", {id: "user-email", name: "email", type: "email", value: user.email, onChange: this.handleChange})
+        ), 
+        React.createElement("h3", null, "Change Password"), 
+        (user.conf_password !== '' && user.conf_password !== undefined)?this.passwordsMatch()?React.createElement("p", {className: "form-success"}, "Passwords match!"):React.createElement("p", {className: "form-error"}, "Passwords don't match!"):'', 
+        React.createElement("label", {htmlFor: "user-password"}, 
+          React.createElement("span", {className: "label-text"}, "New Password"), 
+          React.createElement("input", {id: "user-password", name: "new_password", type: "password", value: user.new_password, onChange: this.handleChange})
+        ), 
+        React.createElement("label", {htmlFor: "user-conf-password"}, 
+          React.createElement("span", {className: "label-text"}, "Confirm Password"), 
+          React.createElement("input", {id: "user-conf-password", name: "conf_password", type: "password", value: user.conf_password, onChange: this.handleChange})
+        )
+      )
+    )
+  }
+});
+
+},{"./Profile_Characters.jsx":163}],163:[function(require,module,exports){
+
+module.exports = React.createClass({displayName: "exports",
+  _cta: null,
+  getInitialState: function () {
+    return JSON.parse(document.getElementById('user-object').innerHTML) || {};
+  },
+  componentDidMount: function () {
+    var _self = this;
+    this._cta = $('#user-profile-characters');
+
+    var newChar =$('#new-character');
+    newChar.on('keypress', function (e) {
+      if (e.which == 13) {
+        _self.addCharacter(this);
+        newChar.val('');
+      }
+    });
+
+    $('#new-character-submit').on('click', function () {
+      _self.addCharacter(newChar[0]);
+      newChar.val('');
+    });
+  },
+  addCharacter: function (input) {
+    var character = {};
+    if (input.value.trim() == '') {
+      return;
+    }
+    character[input.name] = input.value.trim();
+    character['retainers'] = [];
+    this.state.characters.push(character);
+    this.setState(this.state);
+    input.value = '';
+  },
+  addRetainer: function (event) {
+    var input = this._cta.find('.new-retainer[data-index='+event.target.dataset.index+']')[0];
+    var retainer = {};
+    if (input.value.trim() == '') {
+      return;
+    }
+    retainer[input.name] = input.value.trim();
+    this.state.characters[input.dataset.index].retainers.push(retainer);
+    this.setState(this.state);
+    input.value = '';
+  },
+  deleteCharacter: function (event) {
+    this.state.characters.splice(event.target.dataset.index, 1);
+    this.setState(this.state);
+  },
+  deleteRetainer: function (event) {
+    this.state.characters[event.target.dataset.index].retainers.splice(event.target.dataset.ret_index, 1);
+    this.setState(this.state);
+  },
+  onCharacterChange: function (event) {
+    this.state.characters[event.target.dataset.index][event.target.name] = event.target.value.trim();
+    this.setState(this.state);
+  },
+  onRetainerChange: function (event) {
+    this.state.characters[event.target.dataset.index].retainers[event.target.dataset.ret_index][event.target.name] = event.target.value.trim();
+    this.setState(this.state);
+  },
+  render: function () {
+    var _self = this;
+    var user = this.state;
+    return (
+      React.createElement("table", {id: "user-profile-characters", className: "table-grouped"}, 
+        React.createElement("thead", null, 
+          React.createElement("tr", null, 
+            React.createElement("th", null, "Character"), 
+            React.createElement("th", {className: "align-left"}, "Retainers")
+          )
+        ), 
+        React.createElement("tbody", null, 
+          user.characters.map(function (character, charIndex) {
+            return (
+              React.createElement("tr", {key: charIndex}, 
+                React.createElement("td", null, 
+                  React.createElement("input", {type: "text", name: "character_name", value: character.character_name, onChange: _self.onCharacterChange, "data-index": charIndex}), 
+                  React.createElement("button", {type: "button", onClick: _self.deleteCharacter, "data-index": charIndex}, "x")
+                ), 
+                React.createElement("td", null, 
+                  React.createElement("table", null, 
+                    React.createElement("tbody", null, 
+                      character.retainers.map(function (retainer, retIndex) {
+                        return (
+                          React.createElement("tr", {key: retIndex}, 
+                            React.createElement("td", null, 
+                              React.createElement("input", {type: "text", name: "retainer_name", value: retainer.retainer_name, onChange: _self.onRetainerChange, "data-index": charIndex, "data-ret_index": retIndex, key: retIndex}), 
+                              React.createElement("button", {type: "button", onClick: _self.deleteRetainer, "data-index": charIndex, "data-ret_index": retIndex}, "x")
+                            )
+                          )
+                        );
+                      }), 
+                      React.createElement("tr", null, 
+                        React.createElement("td", null, 
+                          React.createElement("input", {className: "new-retainer", type: "text", name: "retainer_name", "data-index": charIndex, placeholder: "Retainer's Name"}), 
+                          React.createElement("button", {className: "new-retainer-submit", type: "button", "data-index": charIndex, onClick: _self.addRetainer}, "+")
+                        )
+                      )
+                    )
+                  )
+                )
+              )
+            );
+          }), 
+          React.createElement("tr", null, 
+            React.createElement("td", null, 
+              React.createElement("input", {id: "new-character", type: "text", name: "character_name", placeholder: "Character's Name"}), 
+              React.createElement("button", {id: "new-character-submit", type: "button"}, "+")
+            )
+          )
+        )
+      )
+    )
+  }
+});
+
+},{}],164:[function(require,module,exports){
 /**
  * Display a new Transaction form as a table row
  */
@@ -23476,7 +23634,7 @@ module.exports = React.createClass({displayName: "exports",
   }
 });
 
-},{}],163:[function(require,module,exports){
+},{}],165:[function(require,module,exports){
 /**
  * Display a Transaction as a table row
  */
@@ -23535,7 +23693,7 @@ module.exports = React.createClass({displayName: "exports",
   }
 });
 
-},{}],164:[function(require,module,exports){
+},{}],166:[function(require,module,exports){
 var Transaction_row = require('./Transaction_row.jsx');
 var Transaction_new_row = require('./Transaction_new_row.jsx');
 
@@ -23579,14 +23737,13 @@ module.exports = React.createClass({displayName: "exports",
   }
 });
 
-},{"./Transaction_new_row.jsx":162,"./Transaction_row.jsx":163}],165:[function(require,module,exports){
+},{"./Transaction_new_row.jsx":164,"./Transaction_row.jsx":165}],167:[function(require,module,exports){
 /**
  * app.jsx
  *
  * @author Nate Perry
  * @created 1//22/2016
  */
-
 React = require('react');
 ReactDOM = require('react-dom');
 Constants = require('./Constants.jsx');
@@ -23594,13 +23751,30 @@ moment = require('moment');
 numeral = require('numeral');
 numeral.defaultFormat(Constants.formats.numbers.display);
 
-var Transactions = require('./Transactions.jsx');
+/**
+ * Initialize sales table
+ */
+var salesTable = document.getElementById('table-sales-cta');
+if (salesTable) {
+  var Transactions = require('./Transactions.jsx');
+  ReactDOM.render(
+    React.createElement(Transactions, null),
+    salesTable
+  );
+}
 
-ReactDOM.render(
-  React.createElement(Transactions, null),
-  document.getElementById('table-cta')
-);
+var userProfile = document.getElementById('user-profile-form-cta');
+if (userProfile) {
+  var Profile = require('./Profile.jsx');
+  ReactDOM.render(
+    React.createElement(Profile, null),
+    userProfile
+  );
+  var Characters = require('./Profile_Characters.jsx');
+  ReactDOM.render(
+    React.createElement(Characters, null),
+    document.getElementById('user-profile-form-characters-cta')
+  );
+}
 
-console.log('app initialized');
-
-},{"./Constants.jsx":161,"./Transactions.jsx":164,"moment":2,"numeral":3,"react":160,"react-dom":4}]},{},[165]);
+},{"./Constants.jsx":161,"./Profile.jsx":162,"./Profile_Characters.jsx":163,"./Transactions.jsx":166,"moment":2,"numeral":3,"react":160,"react-dom":4}]},{},[167]);
