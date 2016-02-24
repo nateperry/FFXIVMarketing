@@ -9,39 +9,21 @@ var utils = require('../utils');
  * Dashboard
  */
 router.get('/', function (req, res, next) {
-  console.log('loading dashboard');
+  var numCharacters = 0, numRetainers = 0;
+  for (var i=0; i < req.user.characters.length; i++) {
+    numCharacters++;
+    for (var j=0; j < req.user.characters[i].retainers.length; j++) {
+      numRetainers++;
+    }
+  }
   res.render('dashboard', {
     title: 'Dashboard',
-    user: req.user
+    user: req.user,
+    numCharacters: numCharacters,
+    numRetainers: numRetainers
   });
 });
 
-
-router.get('/sales', function (req, res) {
-  res.redirect('/app/sales/0/0');
-});
-
-/**
- * Sales Table
- */
-router.get('/sales/:character_id/:retainer_id', function (req, res, next) {
-  var character = req.user.characters[req.params.character_id];
-  var retainer = character.retainers[req.params.retainer_id];
-  Transaction.find({
-    user_id: req.user._id,
-    character_id: character._id,
-    retainer_id: retainer._id
-  }, function (err, docs) {
-    if (err) throw err;
-    res.render('sales', {
-      title: 'Sales',
-      user: req.user,
-      character: character,
-      retainer: retainer,
-      transactions: JSON.stringify(docs)
-    });
-  });
-});
 
 /**
  * User Profile
@@ -125,6 +107,42 @@ router.post('/profile', function (req, res) {
     errors.push('Email is required');
     return res.render('profile',{user: req.user, userJSON: JSON.stringify(jsonUser), errors: errors});
   }
+});
+
+/**
+ * Route Middleware
+ */
+router.use(function (req, res, next) {
+  if (req.user.characters.length < 1) {
+    return res.render('no-characters', {user: req.user});
+  }
+  next();
+});
+
+/**
+ * Sales Table
+ */
+router.get('/sales', function (req, res) {
+  res.redirect('/app/sales/0/0');
+});
+
+router.get('/sales/:character_id/:retainer_id', function (req, res, next) {
+  var character = req.user.characters[req.params.character_id];
+  var retainer = character.retainers[req.params.retainer_id];
+  Transaction.find({
+    user_id: req.user._id,
+    character_id: character._id,
+    retainer_id: retainer._id
+  }, function (err, docs) {
+    if (err) throw err;
+    res.render('sales', {
+      title: 'Sales',
+      user: req.user,
+      character: character,
+      retainer: retainer,
+      transactions: JSON.stringify(docs)
+    });
+  });
 });
 
 module.exports = router;

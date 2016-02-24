@@ -5,6 +5,9 @@
   display: inline-block;
   color: $color-secondary-2-4;
   font-weight: 700;
+  &:hover, &:focus {
+    background-color: $color-secondary-2-2;
+  }
 }
 
 button,

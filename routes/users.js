@@ -26,8 +26,27 @@ router.get('/user/new', function(req, res, next) {
 
 // handles a new user request
 router.post('/user/new', function(req, res, next) {
+  // validate the user
+  var errors = [];
+  if (!req.body.email.trim()) {
+    errors.push('Email address is required');
+  }
+  if (!req.body.password.trim()) {
+    errors.push('Password is required');
+  }
+  if (req.body.password !== req.body.conf_password) {
+    errors.push('Password mismatch');
+  }
+  if (req.body.password.trim().length < 8) {
+    errors.push('Passwords must be at least 8 characters long');
+  }
+  // check for any errors
+  if (errors.length > 0) {
+    return res.render('new-user', {errors: errors, user: req.body});
+  }
+
   var newUser = new User(req.body);
-  // verify that this email does not already exist
+  // verify that this email does not already exist before attempting to insert
   User.findOne({
     email: req.body.email
   }, function (err, user) {
@@ -35,12 +54,12 @@ router.post('/user/new', function(req, res, next) {
     if (!user) {
       newUser.save(function (err) {
         if (err) {
-          return res.render('new-user', {error: 'An error occurred while saving the user. Please try again.', user: req.body});
+          return res.render('new-user', {errors: ['An error occurred while saving the user. Please try again.'], user: req.body});
         }
         return res.render('new-user-confirmation');
       });
     } else {
-      return res.render('new-user', {error: 'Email already in use.', user: req.body});
+      return res.render('new-user', {errors: ['Email already in use.'], user: req.body});
     }
   });
 });

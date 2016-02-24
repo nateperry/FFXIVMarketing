@@ -1,0 +1,9 @@
+.profile-summary {
+  border: 2px solid $border-color;
+  padding: 8px 12px;
+  p {
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
