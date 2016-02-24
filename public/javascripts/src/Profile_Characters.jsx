@@ -58,7 +58,7 @@ module.exports = React.createClass({
     this.setState(this.state);
   },
   onRetainerChange: function (event) {
-    this.state.characters[event.target.dataset.index].retainers[event.target.dataset.ret_index][event.target.name] = event.target.value.trim();
+    this.state.characters[event.target.dataset.index].retainers[event.target.dataset.ret_index]['retainer_name'] = event.target.value.trim();
     this.setState(this.state);
   },
   render: function () {
