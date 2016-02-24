@@ -1,24 +1,25 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>{{title}} | FFXIV Marketing</title>
-    {{> headRequired }}
-</head>
-<body>
-{{> header}}
-<div id="main">
-    {{{body}}}
-</div>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.0/jquery.js"></script>
-{{#if transactions}}
-    <script id="initial-trans" type="application/json">{{{transactions}}}</script>
-{{/if}}
-{{#if userJSON}}
-    <script id="user-object" type="application/json">{{{userJSON}}}</script>
-{{/if}}
-{{#if character}}
-    <script id="character-code" type="application/json">{"character_id":"{{character._id}}","retainer_id":"{{retainer._id}}"}</script>
-{{/if}}
-<script type="text/javascript" src="/javascripts/build/app.js"></script>
-</body>
+    <head>
+        <title>{{#if title}}{{title}} | {{/if}}FFXIV Marketing</title>
+        {{> headRequired }}
+    </head>
+    <body>
+        {{> header}}
+        <div id="main">
+            {{{body}}}
+        </div>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.0/jquery.js"></script>
+        {{#if transactions}}
+            <script id="initial-trans" type="application/json">{{{transactions}}}</script>
+        {{/if}}
+        {{#if userJSON}}
+            <script id="user-object" type="application/json">{{{userJSON}}}</script>
+        {{/if}}
+        {{#if character}}
+            <script id="character-code" type="application/json">{"character_id":"{{character._id}}","retainer_id":"{{retainer._id}}"}</script>
+        {{/if}}
+        <script type="text/javascript" src="/javascripts/build/app.js"></script>
+        {{> analytics}}
+    </body>
 </html>
