@@ -4,12 +4,14 @@ $breakpoint-mobile: 600px;
 
 
 // colors
-$black: #232321;
+$black: #141413;
 $white: #ffffff;
 $gray-med-1: #bfbfbf;
 $gray-light-1: #c6c6c6;
 $gray-light-2: #e6e6e6;
 $gray-dark-1: #505050;
+$gray-dark-2: #414141;
+$gray-dark-3: #252525;
 
 // Palette color codes
 // Palette URL: http://paletton.com/#uid=71y200kllllaFw0g0qFqFg0w0aF */
@@ -43,7 +45,7 @@ $alert-green: #489413;
 
 
 // helpers
-$border-color: #000;//$gray-dark-1;
+$border-color: $gray-dark-3;
 $border-radius: 6px;
 
 // color assignments

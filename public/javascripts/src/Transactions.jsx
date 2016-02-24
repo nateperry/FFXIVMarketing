@@ -4,8 +4,10 @@ var Transaction_new_row = require('./Transaction_new_row.jsx');
 module.exports = React.createClass({
   getInitialState: function () {
     // set initial application state
+    var charCode = JSON.parse(document.getElementById('character-code').innerHTML) || {};
     return {
-      transactions: JSON.parse(document.getElementById('initial-trans').innerHTML) || []
+      transactions: JSON.parse(document.getElementById('initial-trans').innerHTML) || [],
+      owner: charCode
     };
   },
   onUpdate: function (transactions) {
@@ -34,7 +36,7 @@ module.exports = React.createClass({
         {this.state.transactions.map(function (row, index) {
           return <Transaction_row transaction={row} onUpdate={_self.onUpdate} key={index} />;
         })}
-        <Transaction_new_row onUpdate={this.onUpdate} />
+        <Transaction_new_row owner={this.state.owner} onUpdate={this.onUpdate} />
         </tbody>
       </table>
     );

@@ -21,6 +21,8 @@ var transactionSchema = new Schema({
   price_sold: Number,
   quantity: {type: Number, required: true},
   user_id: {type: String, required: true},
+  character_id: {type: String, required: true},
+  retainer_id: {type: String, required: true},
   created_at: Number,
   updated_at: Number
 });

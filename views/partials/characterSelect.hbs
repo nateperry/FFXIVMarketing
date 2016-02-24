@@ -1,0 +1,20 @@
+<div class="grid">
+    <div class="col">
+        <div class="character-current">
+            <span class="character-label">Modifying</span>
+            <h4 class="character-name">{{character.character_name}}</h4>
+            <h2 class="retainer-name">{{retainer.retainer_name}}</h2>
+        </div>
+    </div>
+    <div class="col">
+        <div class="character-changer">
+            <span class="character-label">Change To</span>
+            {{#each user.characters}}
+                <h4 class="character-name">{{this.character_name}}</h4>
+                {{#retainers}}
+                    <a href="../{{../this._id}}/{{this._id}}">{{this.retainer_name}}</a>
+                {{/retainers}}
+            {{/each}}
+        </div>
+    </div>
+</div>

@@ -484,7 +484,7 @@ th {
 }
 
 body {
-  background-color: #232321;
+  background-color: #141413;
   color: #ffffff;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
@@ -511,11 +511,11 @@ table td.tax, table th.tax {
   width: 65px;
 }
 table td.calc {
-  background-color: #282826;
+  background-color: #191918;
   color: #505050;
 }
 table td.col-delete {
-  background: #282826;
+  background: #191918;
 }
 table td table td {
   padding: 0;
@@ -528,11 +528,11 @@ table tr.new-transaction {
   border-bottom-width: 0 !important;
 }
 table thead {
-  background-color: #000;
+  background-color: #252525;
   color: #ffffff;
 }
 table tbody tr:nth-child(5n) {
-  border-bottom: 1px solid #000;
+  border-bottom: 1px solid #252525;
 }
 table.table-grouped > tbody > tr {
   border-bottom: 1px solid #000;
@@ -648,6 +648,29 @@ hr.hr-large {
 }
 hr.hr-x-large {
   margin: 20px 0;
+}
+
+.character-label {
+  color: #414141;
+  font-size: 10px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.character-current, .character-changer {
+  padding: 15px 10px;
+}
+
+.character-current .retainer-name {
+  color: #bb7619;
+}
+
+.character-changer a {
+  margin-right: 15px;
+}
+.character-changer a:last-child {
+  margin-right: 0;
 }
 
 .align-left {

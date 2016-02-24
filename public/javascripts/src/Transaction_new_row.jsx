@@ -12,20 +12,17 @@ module.exports = React.createClass({
       high_quality: false,
       date_listed: moment().format(Constants.formats.dates.display),
       date_sold: '',
-      price_sold: ''
+      price_sold: '',
+      owner: this.props.owner
     }
   },
   componentDidMount: function () {
     var _self = this;
-
     this._cta = $('.new-transaction');
-
     var $inputs = this._cta.find('input');
-
     $inputs.on('focus', function () {
       $(this).removeClass('invalid')
     });
-
     $inputs.on('keypress', function (e) {
       if (e.which == 13) {
         _self.submit();
@@ -107,7 +104,11 @@ module.exports = React.createClass({
   render: function () {
     return (
       <tr className="new-transaction">
-        <td><input type="text" name="name" value={this.state.name} onChange={this.handleChange} required /></td>
+        <td>
+          <input type="text" name="name" value={this.state.name} onChange={this.handleChange} required />
+          <input type="hidden" name="character_id" value={this.state.owner.character_id} />
+          <input type="hidden" name="retainer_id" value={this.state.owner.retainer_id} />
+        </td>
         <td><input type="checkbox" name="high_quality" checked={this.state.high_quality} onChange={this.handleCheck} /></td>
         <td><input type="text" name="price_listed" value={this.state.price_listed} onChange={this.handleChange} required /></td>
         <td><input type="text" name="quantity" value={this.state.quantity} onChange={this.handleChange} required /></td>
@@ -116,7 +117,7 @@ module.exports = React.createClass({
         <td><input type="text" name="date_sold" className="date" value={this.state.date_sold} onChange={this.handleChange} /></td>
         <td><input type="text" name="price_sold" value={this.state.price_sold} onChange={this.handleChange} /></td>
         <td colSpan="2">&nbsp;</td>
-        <td><button type="button" className="new-transaction-submit" onclick={this.submit}>+</button></td>
+        <td><button type="button" className="new-transaction-submit" onClick={this.submit}>+</button></td>
       </tr>
     )
   }

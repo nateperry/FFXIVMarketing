@@ -16,15 +16,28 @@ router.get('/', function (req, res, next) {
   });
 });
 
+
+router.get('/sales', function (req, res) {
+  res.redirect('/app/sales/0/0');
+});
+
 /**
  * Sales Table
  */
-router.get('/sales', function (req, res, next) {
-  Transaction.find({user_id: req.user._id}, function (err, docs) {
+router.get('/sales/:character_id/:retainer_id', function (req, res, next) {
+  var character = req.user.characters[req.params.character_id];
+  var retainer = character.retainers[req.params.retainer_id];
+  Transaction.find({
+    user_id: req.user._id,
+    character_id: character._id,
+    retainer_id: retainer._id
+  }, function (err, docs) {
     if (err) throw err;
     res.render('sales', {
       title: 'Sales',
       user: req.user,
+      character: character,
+      retainer: retainer,
       transactions: JSON.stringify(docs)
     });
   });
@@ -76,16 +89,21 @@ router.post('/profile', function (req, res) {
           char['character_name'] = characters[i];
           char['retainers'] = [];
           var retainers = (typeof req.body[i+'_retainer_name'] == 'string'? [req.body[i+'_retainer_name']] : req.body[i+'_retainer_name']);
-          for (var j = 0; j < retainers.length; j++) {
-            var ret = {};
-            ret['_id'] = j;
-            ret['retainer_name'] = retainers[j];
-            char['retainers'].push(ret);
+          if (retainers) {
+            for (var j = 0; j < retainers.length; j++) {
+              var ret = {};
+              ret['_id'] = j;
+              ret['retainer_name'] = retainers[j];
+              char['retainers'].push(ret);
+            }
+            data['characters'].push(char);
+          } else {
+            errors.push('At least 1 retainer is required');
           }
-          data['characters'].push(char);
         }
+      } else {
+        errors.push('At least 1 character and retainer is required');
       }
-      console.log('data =', data);
       if (errors.length > 0) {
         // dont update the user if there are errors
         return res.render('profile',{user: req.user, userJSON: JSON.stringify(jsonUser), errors: errors});

@@ -16,6 +16,9 @@
 {{#if userJSON}}
     <script id="user-object" type="application/json">{{{userJSON}}}</script>
 {{/if}}
+{{#if character}}
+    <script id="character-code" type="application/json">{"character_id":"{{character._id}}","retainer_id":"{{retainer._id}}"}</script>
+{{/if}}
 <script type="text/javascript" src="/javascripts/build/app.js"></script>
 </body>
 </html>

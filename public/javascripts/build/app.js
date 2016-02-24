@@ -23528,20 +23528,17 @@ module.exports = React.createClass({displayName: "exports",
       high_quality: false,
       date_listed: moment().format(Constants.formats.dates.display),
       date_sold: '',
-      price_sold: ''
+      price_sold: '',
+      owner: this.props.owner
     }
   },
   componentDidMount: function () {
     var _self = this;
-
     this._cta = $('.new-transaction');
-
     var $inputs = this._cta.find('input');
-
     $inputs.on('focus', function () {
       $(this).removeClass('invalid')
     });
-
     $inputs.on('keypress', function (e) {
       if (e.which == 13) {
         _self.submit();
@@ -23623,7 +23620,11 @@ module.exports = React.createClass({displayName: "exports",
   render: function () {
     return (
       React.createElement("tr", {className: "new-transaction"}, 
-        React.createElement("td", null, React.createElement("input", {type: "text", name: "name", value: this.state.name, onChange: this.handleChange, required: true})), 
+        React.createElement("td", null, 
+          React.createElement("input", {type: "text", name: "name", value: this.state.name, onChange: this.handleChange, required: true}), 
+          React.createElement("input", {type: "hidden", name: "character_id", value: this.state.owner.character_id}), 
+          React.createElement("input", {type: "hidden", name: "retainer_id", value: this.state.owner.retainer_id})
+        ), 
         React.createElement("td", null, React.createElement("input", {type: "checkbox", name: "high_quality", checked: this.state.high_quality, onChange: this.handleCheck})), 
         React.createElement("td", null, React.createElement("input", {type: "text", name: "price_listed", value: this.state.price_listed, onChange: this.handleChange, required: true})), 
         React.createElement("td", null, React.createElement("input", {type: "text", name: "quantity", value: this.state.quantity, onChange: this.handleChange, required: true})), 
@@ -23632,7 +23633,7 @@ module.exports = React.createClass({displayName: "exports",
         React.createElement("td", null, React.createElement("input", {type: "text", name: "date_sold", className: "date", value: this.state.date_sold, onChange: this.handleChange})), 
         React.createElement("td", null, React.createElement("input", {type: "text", name: "price_sold", value: this.state.price_sold, onChange: this.handleChange})), 
         React.createElement("td", {colSpan: "2"}, " "), 
-        React.createElement("td", null, React.createElement("button", {type: "button", className: "new-transaction-submit", onclick: this.submit}, "+"))
+        React.createElement("td", null, React.createElement("button", {type: "button", className: "new-transaction-submit", onClick: this.submit}, "+"))
       )
     )
   }
@@ -23704,8 +23705,10 @@ var Transaction_new_row = require('./Transaction_new_row.jsx');
 module.exports = React.createClass({displayName: "exports",
   getInitialState: function () {
     // set initial application state
+    var charCode = JSON.parse(document.getElementById('character-code').innerHTML) || {};
     return {
-      transactions: JSON.parse(document.getElementById('initial-trans').innerHTML) || []
+      transactions: JSON.parse(document.getElementById('initial-trans').innerHTML) || [],
+      owner: charCode
     };
   },
   onUpdate: function (transactions) {
@@ -23734,7 +23737,7 @@ module.exports = React.createClass({displayName: "exports",
         this.state.transactions.map(function (row, index) {
           return React.createElement(Transaction_row, {transaction: row, onUpdate: _self.onUpdate, key: index});
         }), 
-        React.createElement(Transaction_new_row, {onUpdate: this.onUpdate})
+        React.createElement(Transaction_new_row, {owner: this.state.owner, onUpdate: this.onUpdate})
         )
       )
     );

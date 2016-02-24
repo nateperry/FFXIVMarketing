@@ -1,0 +1,33 @@
+.character-label {
+  color: $gray-dark-2;
+  font-size: 10px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.character-name {
+
+}
+
+.retainer-name {
+
+}
+
+.character-current, .character-changer {
+  padding: 15px 10px;
+}
+
+.character-current {
+  .retainer-name {
+    color: $color-secondary-2-0;
+  }
+}
+.character-changer {
+  a {
+    margin-right: 15px;
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+}
