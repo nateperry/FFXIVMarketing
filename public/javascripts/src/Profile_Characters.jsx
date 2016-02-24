@@ -26,7 +26,8 @@ module.exports = React.createClass({
     if (input.value.trim() == '') {
       return;
     }
-    character[input.name] = input.value.trim();
+    character['isNew'] = true;
+    character['character_name'] = input.value.trim();
     character['retainers'] = [];
     this.state.characters.push(character);
     this.setState(this.state);
@@ -38,7 +39,8 @@ module.exports = React.createClass({
     if (input.value.trim() == '') {
       return;
     }
-    retainer[input.name] = input.value.trim();
+    retainer['isNew'] = true;
+    retainer['retainer_name'] = input.value.trim();
     this.state.characters[input.dataset.index].retainers.push(retainer);
     this.setState(this.state);
     input.value = '';
@@ -76,6 +78,7 @@ module.exports = React.createClass({
               <tr key={charIndex}>
                 <td>
                   <input type="text" name="character_name" value={character.character_name} onChange={_self.onCharacterChange} data-index={charIndex} />
+                  <input type="hidden" name="character_new" value={character.isNew? 'true' : 'false'} />
                   <button type="button" onClick={_self.deleteCharacter} data-index={charIndex}>x</button>
                 </td>
                 <td>
@@ -85,7 +88,8 @@ module.exports = React.createClass({
                         return (
                           <tr key={retIndex}>
                             <td>
-                              <input type="text" name="retainer_name" value={retainer.retainer_name} onChange={_self.onRetainerChange} data-index={charIndex} data-ret_index={retIndex} key={retIndex} />
+                              <input type="text" name={charIndex + '_retainer_name'} value={retainer.retainer_name} onChange={_self.onRetainerChange} data-index={charIndex} data-ret_index={retIndex} key={retIndex} />
+                              <input type="hidden" name={charIndex + '_retainer_new'} value={retainer.isNew? 'true' : 'false'} />
                               <button type="button" onClick={_self.deleteRetainer} data-index={charIndex} data-ret_index={retIndex}>x</button>
                             </td>
                           </tr>
@@ -93,7 +97,7 @@ module.exports = React.createClass({
                       })}
                       <tr>
                         <td>
-                          <input className="new-retainer" type="text" name="retainer_name" data-index={charIndex} placeholder="Retainer's Name" />
+                          <input className="new-retainer" type="text" data-index={charIndex} placeholder="Retainer's Name" />
                           <button className="new-retainer-submit" type="button" data-index={charIndex} onClick={_self.addRetainer}>+</button>
                         </td>
                       </tr>
@@ -105,7 +109,7 @@ module.exports = React.createClass({
           })}
           <tr>
             <td>
-              <input id="new-character" type="text" name="character_name" placeholder="Character's Name" />
+              <input id="new-character" type="text" placeholder="Character's Name" />
               <button id="new-character-submit" type="button">+</button>
             </td>
           </tr>

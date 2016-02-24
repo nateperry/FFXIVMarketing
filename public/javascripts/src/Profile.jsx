@@ -1,6 +1,6 @@
-
-var Characters = require('./Profile_Characters.jsx');
-
+/**
+ * User's Profile
+ */
 module.exports = React.createClass({
   getInitialState: function () {
     return JSON.parse(document.getElementById('user-object').innerHTML) || {};

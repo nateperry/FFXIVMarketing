@@ -30,9 +30,13 @@ if (userProfile) {
     <Profile />,
     userProfile
   );
+}
+
+var charCta = document.getElementById('user-profile-form-characters-cta');
+if (charCta) {
   var Characters = require('./Profile_Characters.jsx');
   ReactDOM.render(
     <Characters />,
-    document.getElementById('user-profile-form-characters-cta')
+    charCta
   );
 }

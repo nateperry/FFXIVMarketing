@@ -39,6 +39,7 @@ router.get('/profile', function (req, res) {
 });
 
 router.post('/profile', function (req, res) {
+  console.log('req.body =', req.body);
   var jsonUser = utils.getCleanUser(req.user);
   var errors = [], data = {updated_at: new Date().getTime()};
   // TODO: add more validation;
@@ -64,6 +65,27 @@ router.post('/profile', function (req, res) {
           data['password'] = bcrypt.hashSync(req.body.new_password.trim());
         }
       }
+      // check for any characters and retainers
+      if (req.body['character_name']) {
+        data['characters'] = [];
+        // ensure that characters is an array
+        var characters = (typeof req.body['character_name'] == 'string'? [req.body['character_name']] : req.body['character_name']);
+        for (var i = 0; i < characters.length; i++) {
+          var char = {};
+          char['_id'] = i;
+          char['character_name'] = characters[i];
+          char['retainers'] = [];
+          var retainers = (typeof req.body[i+'_retainer_name'] == 'string'? [req.body[i+'_retainer_name']] : req.body[i+'_retainer_name']);
+          for (var j = 0; j < retainers.length; j++) {
+            var ret = {};
+            ret['_id'] = j;
+            ret['retainer_name'] = retainers[j];
+            char['retainers'].push(ret);
+          }
+          data['characters'].push(char);
+        }
+      }
+      console.log('data =', data);
       if (errors.length > 0) {
         // dont update the user if there are errors
         return res.render('profile',{user: req.user, userJSON: JSON.stringify(jsonUser), errors: errors});

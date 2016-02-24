@@ -23352,9 +23352,9 @@ module.exports = {
 };
 
 },{}],162:[function(require,module,exports){
-
-var Characters = require('./Profile_Characters.jsx');
-
+/**
+ * User's Profile
+ */
 module.exports = React.createClass({displayName: "exports",
   getInitialState: function () {
     return JSON.parse(document.getElementById('user-object').innerHTML) || {};
@@ -23391,7 +23391,7 @@ module.exports = React.createClass({displayName: "exports",
   }
 });
 
-},{"./Profile_Characters.jsx":163}],163:[function(require,module,exports){
+},{}],163:[function(require,module,exports){
 
 module.exports = React.createClass({displayName: "exports",
   _cta: null,
@@ -23420,7 +23420,8 @@ module.exports = React.createClass({displayName: "exports",
     if (input.value.trim() == '') {
       return;
     }
-    character[input.name] = input.value.trim();
+    character['isNew'] = true;
+    character['character_name'] = input.value.trim();
     character['retainers'] = [];
     this.state.characters.push(character);
     this.setState(this.state);
@@ -23432,7 +23433,8 @@ module.exports = React.createClass({displayName: "exports",
     if (input.value.trim() == '') {
       return;
     }
-    retainer[input.name] = input.value.trim();
+    retainer['isNew'] = true;
+    retainer['retainer_name'] = input.value.trim();
     this.state.characters[input.dataset.index].retainers.push(retainer);
     this.setState(this.state);
     input.value = '';
@@ -23470,6 +23472,7 @@ module.exports = React.createClass({displayName: "exports",
               React.createElement("tr", {key: charIndex}, 
                 React.createElement("td", null, 
                   React.createElement("input", {type: "text", name: "character_name", value: character.character_name, onChange: _self.onCharacterChange, "data-index": charIndex}), 
+                  React.createElement("input", {type: "hidden", name: "character_new", value: character.isNew? 'true' : 'false'}), 
                   React.createElement("button", {type: "button", onClick: _self.deleteCharacter, "data-index": charIndex}, "x")
                 ), 
                 React.createElement("td", null, 
@@ -23479,7 +23482,8 @@ module.exports = React.createClass({displayName: "exports",
                         return (
                           React.createElement("tr", {key: retIndex}, 
                             React.createElement("td", null, 
-                              React.createElement("input", {type: "text", name: "retainer_name", value: retainer.retainer_name, onChange: _self.onRetainerChange, "data-index": charIndex, "data-ret_index": retIndex, key: retIndex}), 
+                              React.createElement("input", {type: "text", name: charIndex + '_retainer_name', value: retainer.retainer_name, onChange: _self.onRetainerChange, "data-index": charIndex, "data-ret_index": retIndex, key: retIndex}), 
+                              React.createElement("input", {type: "hidden", name: charIndex + '_retainer_new', value: retainer.isNew? 'true' : 'false'}), 
                               React.createElement("button", {type: "button", onClick: _self.deleteRetainer, "data-index": charIndex, "data-ret_index": retIndex}, "x")
                             )
                           )
@@ -23487,7 +23491,7 @@ module.exports = React.createClass({displayName: "exports",
                       }), 
                       React.createElement("tr", null, 
                         React.createElement("td", null, 
-                          React.createElement("input", {className: "new-retainer", type: "text", name: "retainer_name", "data-index": charIndex, placeholder: "Retainer's Name"}), 
+                          React.createElement("input", {className: "new-retainer", type: "text", "data-index": charIndex, placeholder: "Retainer's Name"}), 
                           React.createElement("button", {className: "new-retainer-submit", type: "button", "data-index": charIndex, onClick: _self.addRetainer}, "+")
                         )
                       )
@@ -23499,7 +23503,7 @@ module.exports = React.createClass({displayName: "exports",
           }), 
           React.createElement("tr", null, 
             React.createElement("td", null, 
-              React.createElement("input", {id: "new-character", type: "text", name: "character_name", placeholder: "Character's Name"}), 
+              React.createElement("input", {id: "new-character", type: "text", placeholder: "Character's Name"}), 
               React.createElement("button", {id: "new-character-submit", type: "button"}, "+")
             )
           )
@@ -23770,11 +23774,14 @@ if (userProfile) {
     React.createElement(Profile, null),
     userProfile
   );
+}
+
+var charCta = document.getElementById('user-profile-form-characters-cta');
+if (charCta) {
   var Characters = require('./Profile_Characters.jsx');
   ReactDOM.render(
     React.createElement(Characters, null),
-    document.getElementById('user-profile-form-characters-cta')
+    charCta
   );
 }
-
 },{"./Constants.jsx":161,"./Profile.jsx":162,"./Profile_Characters.jsx":163,"./Transactions.jsx":166,"moment":2,"numeral":3,"react":160,"react-dom":4}]},{},[167]);

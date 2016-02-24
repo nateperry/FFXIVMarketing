@@ -66,7 +66,5 @@ exports.getCleanUser = function (user) {
   clean['password'] = null;
   clean['new_password'] = '';
   clean['conf_password'] = '';
-  console.log('clean =', clean);
-  console.log('user =', user);
   return clean;
 };
