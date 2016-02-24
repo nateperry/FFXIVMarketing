@@ -30,6 +30,7 @@ mongoose.connection.on('error', console.error.bind(console, 'connection error:')
 // secret variable
 app.set('superSecret', config.secret);
 app.set('cookieName', config.cookieName);
+app.set('registration-phrase', config.registration_secret);
 
 // view engine setup
 hbs.registerPartials(__dirname + '/views/partials');

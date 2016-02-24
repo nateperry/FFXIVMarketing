@@ -40,6 +40,9 @@ router.post('/user/new', function(req, res, next) {
   if (req.body.password.trim().length < 8) {
     errors.push('Passwords must be at least 8 characters long');
   }
+  if (req.body.secret_phrase.trim() !== req.app.get('registration-phrase')) {
+    errors.push('Incorrect secret phrase');
+  }
   // check for any errors
   if (errors.length > 0) {
     return res.render('new-user', {errors: errors, user: req.body});
