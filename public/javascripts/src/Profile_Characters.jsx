@@ -76,7 +76,7 @@ module.exports = React.createClass({
           {user.characters.map(function (character, charIndex) {
             return (
               <tr key={charIndex}>
-                <td>
+                <td className="input-col">
                   <input type="text" name="character_name" value={character.character_name} onChange={_self.onCharacterChange} data-index={charIndex} />
                   <input type="hidden" name="character_new" value={character.isNew? 'true' : 'false'} />
                   <button type="button" onClick={_self.deleteCharacter} data-index={charIndex}>x</button>
@@ -87,7 +87,7 @@ module.exports = React.createClass({
                       {character.retainers.map(function (retainer, retIndex) {
                         return (
                           <tr key={retIndex}>
-                            <td>
+                            <td className="input-col">
                               <input type="text" name={charIndex + '_retainer_name'} value={retainer.retainer_name} onChange={_self.onRetainerChange} data-index={charIndex} data-ret_index={retIndex} key={retIndex} />
                               <input type="hidden" name={charIndex + '_retainer_new'} value={retainer.isNew? 'true' : 'false'} />
                               <button type="button" onClick={_self.deleteRetainer} data-index={charIndex} data-ret_index={retIndex}>x</button>
@@ -96,7 +96,7 @@ module.exports = React.createClass({
                         );
                       })}
                       <tr>
-                        <td>
+                        <td className="input-col">
                           <input className="new-retainer" type="text" data-index={charIndex} placeholder="Retainer's Name" />
                           <button className="new-retainer-submit" type="button" data-index={charIndex} onClick={_self.addRetainer}>+</button>
                         </td>
@@ -108,7 +108,7 @@ module.exports = React.createClass({
             );
           })}
           <tr>
-            <td>
+            <td className="input-col">
               <input id="new-character" type="text" placeholder="Character's Name" />
               <button id="new-character-submit" type="button">+</button>
             </td>

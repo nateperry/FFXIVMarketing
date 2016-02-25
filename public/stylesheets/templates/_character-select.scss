@@ -1,5 +1,5 @@
 .character-label {
-  color: $gray-dark-2;
+  color: $color-subdued;
   font-size: 10px;
   font-weight: bold;
   letter-spacing: 1px;
@@ -15,12 +15,12 @@
 }
 
 .character-current, .character-changer {
-  padding: 15px 10px;
+  padding: 0 0;
 }
 
 .character-current {
   .retainer-name {
-    color: $color-secondary-2-0;
+    color: $color-primary;
   }
 }
 .character-changer {

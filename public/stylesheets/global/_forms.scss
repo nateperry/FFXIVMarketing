@@ -3,17 +3,33 @@ input[type=email],
 input[type=password] {
   background-color: transparent;
   border: 0;
-  border-bottom: 1px solid $gray-med-1;
-  padding: 2px 4px;
+  border-bottom: 1px solid $border-color;
+  line-height: 18px;
+  padding: 6px 4px;
   width: 100%;
   &:focus {
-    border-color: $color-secondary-2-0;
-    color: $color-secondary-2-0;
+    border-color: $orange;
+    color: $orange;
     outline: none;
   }
   &.invalid {
     border-color: $alert-red;
     color: $alert-red;
+  }
+}
+
+input[type=checkbox] {
+  @include appearance(none);
+  background-color: transparent;
+  border: 1px solid $gray-dark;
+  height: 1em;
+  width: 1em;
+  &:focus {
+    border-color: $orange;
+    outline: $orange;
+  }
+  &:checked {
+    background-color: $orange;
   }
 }
 
@@ -28,8 +44,9 @@ form {
     display: block;
     margin-bottom: 15px;
     .label-text {
+      color: $color-subdued;
       display: inline-block;
-      width: 150px;
+      text-transform: uppercase;
     }
   }
   .form-error {
@@ -46,11 +63,6 @@ form {
 
 @media (min-width: $breakpoint-mobile) {
   form {
-    input[type=text],
-    input[type=email],
-    input[type=password] {
-      display: inline-block;
-      width: 250px;
-    }
+
   }
 }

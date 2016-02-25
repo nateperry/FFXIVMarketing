@@ -23470,7 +23470,7 @@ module.exports = React.createClass({displayName: "exports",
           user.characters.map(function (character, charIndex) {
             return (
               React.createElement("tr", {key: charIndex}, 
-                React.createElement("td", null, 
+                React.createElement("td", {className: "input-col"}, 
                   React.createElement("input", {type: "text", name: "character_name", value: character.character_name, onChange: _self.onCharacterChange, "data-index": charIndex}), 
                   React.createElement("input", {type: "hidden", name: "character_new", value: character.isNew? 'true' : 'false'}), 
                   React.createElement("button", {type: "button", onClick: _self.deleteCharacter, "data-index": charIndex}, "x")
@@ -23481,7 +23481,7 @@ module.exports = React.createClass({displayName: "exports",
                       character.retainers.map(function (retainer, retIndex) {
                         return (
                           React.createElement("tr", {key: retIndex}, 
-                            React.createElement("td", null, 
+                            React.createElement("td", {className: "input-col"}, 
                               React.createElement("input", {type: "text", name: charIndex + '_retainer_name', value: retainer.retainer_name, onChange: _self.onRetainerChange, "data-index": charIndex, "data-ret_index": retIndex, key: retIndex}), 
                               React.createElement("input", {type: "hidden", name: charIndex + '_retainer_new', value: retainer.isNew? 'true' : 'false'}), 
                               React.createElement("button", {type: "button", onClick: _self.deleteRetainer, "data-index": charIndex, "data-ret_index": retIndex}, "x")
@@ -23490,7 +23490,7 @@ module.exports = React.createClass({displayName: "exports",
                         );
                       }), 
                       React.createElement("tr", null, 
-                        React.createElement("td", null, 
+                        React.createElement("td", {className: "input-col"}, 
                           React.createElement("input", {className: "new-retainer", type: "text", "data-index": charIndex, placeholder: "Retainer's Name"}), 
                           React.createElement("button", {className: "new-retainer-submit", type: "button", "data-index": charIndex, onClick: _self.addRetainer}, "+")
                         )
@@ -23502,7 +23502,7 @@ module.exports = React.createClass({displayName: "exports",
             );
           }), 
           React.createElement("tr", null, 
-            React.createElement("td", null, 
+            React.createElement("td", {className: "input-col"}, 
               React.createElement("input", {id: "new-character", type: "text", placeholder: "Character's Name"}), 
               React.createElement("button", {id: "new-character-submit", type: "button"}, "+")
             )

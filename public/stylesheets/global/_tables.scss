@@ -18,6 +18,24 @@ table {
     &.col-delete {
       background: $table-calc-bg;
     }
+    &.input-col {
+      position: relative;
+      input[type=text],
+      input[type=email],
+      input[type=password] {
+        display: block;
+        width: 100% !important;
+      }
+      button,
+      a.button,
+      input[type=button],
+      input[type=reset],
+      input[type=submit] {
+        float: right;
+        margin-bottom: 10px;
+      }
+    }
+    // nested elements
     table {
       td {
         padding: 0;
