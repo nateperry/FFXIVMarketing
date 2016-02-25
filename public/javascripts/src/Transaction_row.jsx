@@ -41,6 +41,7 @@ module.exports = React.createClass({
     return (
       <tr className={(sold)?'sold':''}>
         <td>{t.name}</td>
+        <td>{t.high_quality?'X':''}</td>
         <td>{numeral(t.price_listed).format(Constants.formats.numbers.currency)}</td>
         <td>{numeral(t.quantity).format()}</td>
         <td className="calc">{numeral(total_sale_price).format(Constants.formats.numbers.currency)}</td>

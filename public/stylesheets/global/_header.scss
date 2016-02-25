@@ -1,4 +1,14 @@
 .header {
-  background: #000;
-  padding: 15px 0;
+  background: $header-bg;
+  border-bottom: $header-border;
+  line-height: 45px;
+  a {
+    color: $header-nav-color;
+    display: inline-block;
+    padding: 0 15px;
+    &:hover, &:focus {
+      background-color: $header-nav-hover-bg;
+      color: $header-nav-hover-color;
+    }
+  }
 }

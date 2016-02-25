@@ -1,49 +1,28 @@
 // breakpoints
 
-$breakpoint-mobile: 600px;
+$breakpoint-mobile: 660px;
 
 
 // colors
-$black: #232321;
-$white: #ffffff;
-$gray-med-1: #bfbfbf;
-$gray-light-1: #c6c6c6;
-$gray-light-2: #e6e6e6;
-$gray-dark-1: #505050;
-
-// Palette color codes
-// Palette URL: http://paletton.com/#uid=71y200kllllaFw0g0qFqFg0w0aF */
-$color-primary-0: #AA9B39;	// Main Primary color */
-$color-primary-1: #FFF4AA;
-$color-primary-2: #D4C76A;
-$color-primary-3: #807215;
-$color-primary-4: #554A00;
-
-$color-secondary-1-0: #2A4F6E;	// Main Secondary color (1) */
-$color-secondary-1-1: #718DA5;
-$color-secondary-1-2: #415965;
-$color-secondary-1-3: #123552;
-$color-secondary-1-4: #042037;
-
-$color-secondary-2-0: #bb7619;	// Main Secondary color (2) */
-$color-secondary-2-1: #FFDBAA;
-$color-secondary-2-2: #D4A86A;
-$color-secondary-2-3: #805315;
-$color-secondary-2-4: #553100;
-
-$color-complement-0: #462E74;	// Main Complement color */
-$color-complement-1: #8C7AAE;
-$color-complement-2: #665091;
-$color-complement-3: #2C1657;
-$color-complement-4: #18063A;
-
-$green-sold: #4db76f;
-$alert-red: #ae2d07;
-$alert-green: #489413;
+$white:           #E8EDE3;
+$white-pure:      #FFFFFF;
+$gray-light:      #DBE3D1;
+$gray-medium:     #A7B0A9;
+$gray-dark:       #40484E;
+$black:           #1A1923;
+$black-accent:    #0F0E15;
+$blue:            #0F6F7B;
+$blue-dark:       #09262E;
+$blue-dark-2:     #141C27;
+$orange: #ce8107;
+$alert-red: #B12419;
+$alert-green: #5C8829;
 
 
 // helpers
-$border-color: #000;//$gray-dark-1;
+$color-primary: $blue;
+$color-subdued: $gray-dark;
+$border-color: $gray-dark;
 $border-radius: 6px;
 
 // color assignments
@@ -51,16 +30,31 @@ $border-radius: 6px;
 $body-bg: $black;
 $body-color: $white;
 
-$link-color: $color-secondary-2-1;
-$link-hover-color: $color-secondary-2-0;
+// links
+$link-color: $orange;
+$link-hover-color: lighten($link-color, 10%);
+
+// header
+$header-bg: $blue;
+$header-border: 5px solid $blue-dark;
+$header-nav-color: $gray-light;
+$header-nav-hover-bg: darken($header-bg, 5%);
+$header-nav-hover-color: $white-pure;
 
 // tables
-$table-border: 1px solid $border-color;
-$table-head-bg: $border-color;
+$table-border: 1px solid $black-accent;
+$table-head-bg: $black-accent;
 $table-head-color: $white;
 
 $table-calc-bg: lighten($body-bg, 2%);
-$table-calc-color: $gray-dark-1;
+$table-calc-color: $gray-dark;
 
 $table-sold-bg: transparent;
-$table-sold-color: $gray-dark-1;
+$table-sold-color: $gray-dark;
+
+// buttons
+$button-bg: $blue;
+$button-color: darken($button-bg, 35%);
+$button-color: $white;
+
+$button-bg-hover: lighten($button-bg, 10%);

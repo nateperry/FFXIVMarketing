@@ -1,9 +1,13 @@
 
 %btn {
-  background-color: $color-secondary-2-0;
+  background-color: $button-bg;
   border: 0;
-  color: $color-secondary-2-4;
+  color: $button-color;
+  display: inline-block;
   font-weight: 700;
+  &:hover, &:focus {
+    background-color: $button-bg-hover;
+  }
 }
 
 button,

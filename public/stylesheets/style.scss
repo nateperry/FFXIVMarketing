@@ -8,8 +8,17 @@
 @import "grid/grid";
 @import "global/body";
 @import "global/links";
-@import "global/tables";
 @import "global/forms";
+@import "global/tables";
 @import "global/buttons";
 @import "global/header";
+@import "global/p";
+@import "global/hr";
+
+// templates
+@import "templates/character-select";
+
+@import "dashboard/dashboard";
+
+// utilities and helpers
 @import "utils";

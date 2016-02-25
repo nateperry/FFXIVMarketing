@@ -1,4 +1,18 @@
 <div class="container">
     <h1>Dashboard</h1>
-    <a href="/app/sales" class="button button-large">Sales Table</a>
+    <div class="grid">
+        <div class="col">
+            <h4>Sales Table</h4>
+            <p>The sales table helps you to track everything that you sell on the Marketboard from each retainer.</p>
+            <a href="/app/sales" class="button button-large">Sales Table</a>
+        </div>
+        <div class="col">
+            <h4>Profile Summary</h4>
+            <div class="profile-summary">
+                <p>You have {{numCharacters}} character(s) created</p>
+                <p>You have {{numRetainers}} retainer(s) created</p>
+                <a href="/app/profile" class="button button-large">My Profile</a>
+            </div>
+        </div>
+    </div>
 </div>

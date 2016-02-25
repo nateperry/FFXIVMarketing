@@ -1,0 +1,25 @@
+<form id="user-profile-form" autocomplete="off" method="POST">
+    <div class="container">
+        <h1>My Profile</h1>
+        {{#if errors}}
+            {{#each errors}}
+                <p class="form-error">{{this}}</p>
+            {{/each}}
+        {{else if success}}
+            <p class="form-success">Your changes have been saved successfully!</p>
+        {{/if}}
+        <div class="grid-padded">
+            <div class="grid">
+                <div class="col">
+                    <input type="hidden" name="user_id" value="{{user._id}}" />
+                    <div id="user-profile-form-cta"></div>
+                    <input class="button-large" type="submit" value="Save Changes">
+                </div>
+                <div class="col">
+                    <h3>Characters & Retainers</h3>
+                    <div id="user-profile-form-characters-cta"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

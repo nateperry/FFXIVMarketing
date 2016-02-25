@@ -9,22 +9,21 @@ module.exports = React.createClass({
       name: '',
       price_listed: '',
       quantity: '',
+      high_quality: false,
       date_listed: moment().format(Constants.formats.dates.display),
       date_sold: '',
-      price_sold: ''
+      price_sold: '',
+      owner: this.props.owner
     }
   },
   componentDidMount: function () {
     var _self = this;
-
     this._cta = $('.new-transaction');
-
-    var inputs = this._cta.find('input');
-    inputs.on('focus', function () {
+    var $inputs = this._cta.find('input');
+    $inputs.on('focus', function () {
       $(this).removeClass('invalid')
     });
-
-    inputs.on('keypress', function (e) {
+    $inputs.on('keypress', function (e) {
       if (e.which == 13) {
         _self.submit();
       }
@@ -34,22 +33,26 @@ module.exports = React.createClass({
     var _self = this, obj = {};
     var _invalid = false;
     this._cta.find('input').each(function () {
-      var $input = $(this);
-      var val = $input.val().trim();
-      if ($input.prop('required') && val == '') {
-        _invalid = true;
-        $input.addClass('invalid');
-        return;
-      }
-      if ($input.hasClass('date')) {
-        if (val != '') {
-          var date = moment(val, Constants.formats.dates.display);
-          if (!date.isValid()) {
-            _invalid = true;
-            $input.addClass('invalid');
-            return;
-          } else {
-            val = date.unix();
+      var $input = $(this), val;
+      if ($input.attr('type') == 'checkbox') {
+        val = $input.prop('checked');
+      } else {
+        val = $input.val().trim();
+        if ($input.prop('required') && val == '') {
+          _invalid = true;
+          $input.addClass('invalid');
+          return;
+        }
+        if ($input.hasClass('date')) {
+          if (val != '') {
+            var date = moment(val, Constants.formats.dates.display);
+            if (!date.isValid()) {
+              _invalid = true;
+              $input.addClass('invalid');
+              return;
+            } else {
+              val = date.unix();
+            }
           }
         }
       }
@@ -71,6 +74,7 @@ module.exports = React.createClass({
         if (Constants.ajax.validateResponse(resp)) {
           _self.setState(_self.getInitialState());
           _self.props.onUpdate(resp.transactions);
+          _self._cta.find('input[name=name]').focus();
           return;
         }
         if (resp.error.errors) {
@@ -87,15 +91,25 @@ module.exports = React.createClass({
       }
     });
   },
+  handleCheck: function (event) {
+    var obj = {};
+    obj[event.target.name] = event.target.checked;
+    this.setState(obj);
+  },
   handleChange: function(event) {
     var obj = {};
-    obj[event.target.name] = event.target.value;
+    obj[event.target.name] = event.target.value.trim();
     this.setState(obj);
   },
   render: function () {
     return (
       <tr className="new-transaction">
-        <td><input type="text" name="name" value={this.state.name} onChange={this.handleChange} required /></td>
+        <td>
+          <input type="text" name="name" value={this.state.name} onChange={this.handleChange} required />
+          <input type="hidden" name="character_id" value={this.state.owner.character_id} />
+          <input type="hidden" name="retainer_id" value={this.state.owner.retainer_id} />
+        </td>
+        <td><input type="checkbox" name="high_quality" checked={this.state.high_quality} onChange={this.handleCheck} /></td>
         <td><input type="text" name="price_listed" value={this.state.price_listed} onChange={this.handleChange} required /></td>
         <td><input type="text" name="quantity" value={this.state.quantity} onChange={this.handleChange} required /></td>
         <td>&nbsp;</td>
@@ -103,7 +117,7 @@ module.exports = React.createClass({
         <td><input type="text" name="date_sold" className="date" value={this.state.date_sold} onChange={this.handleChange} /></td>
         <td><input type="text" name="price_sold" value={this.state.price_sold} onChange={this.handleChange} /></td>
         <td colSpan="2">&nbsp;</td>
-        <td><button type="button" className="new-transaction-submit" onclick={this.submit}>+</button></td>
+        <td><button type="button" className="new-transaction-submit" onClick={this.submit}>+</button></td>
       </tr>
     )
   }

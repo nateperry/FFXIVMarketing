@@ -18,6 +18,29 @@ table {
     &.col-delete {
       background: $table-calc-bg;
     }
+    &.input-col {
+      position: relative;
+      input[type=text],
+      input[type=email],
+      input[type=password] {
+        display: block;
+        width: 100% !important;
+      }
+      button,
+      a.button,
+      input[type=button],
+      input[type=reset],
+      input[type=submit] {
+        float: right;
+        margin-bottom: 10px;
+      }
+    }
+    // nested elements
+    table {
+      td {
+        padding: 0;
+      }
+    }
   }
   tr {
     &.sold {
@@ -25,38 +48,29 @@ table {
       color: $table-sold-color;
     }
     &.new-transaction {
-      border: 0 !important;
+      border-bottom-width: 0 !important;
     }
   }
   thead {
     background-color: $table-head-bg;
     color: $table-head-color;
-    tr {
-      &:first-child {
-        td, th {
-          &:first-child {
-            @include border-radius($border-radius 0 0 0);
-          }
-          &:last-child {
-            @include border-radius(0 $border-radius 0 0);
-          }
-        }
-      }
-    }
   }
   tbody {
     tr {
       &:nth-child(5n) {
         border-bottom: $table-border;
       }
-      &:last-child {
-        td, th {
-          &:first-child {
-            @include border-radius(0 0 0 $border-radius);
-          }
-          &:last-child {
-            @include border-radius(0 0 $border-radius 0);
-          }
+    }
+  }
+  &.table-grouped {
+    & > tbody {
+      & > tr {
+        border-bottom: 1px solid #000;
+        &:last-child {
+          border-bottom-width: 0;
+        }
+        & > td {
+          vertical-align: top;
         }
       }
     }
