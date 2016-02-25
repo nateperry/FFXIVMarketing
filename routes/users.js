@@ -78,7 +78,6 @@ router.get('/user/logout', function (req, res, next) {
 /**
  * Password Reset
  */
-
 router.get('/user/reset', function (req, res, next) {
   res.render('password-reset');
 });

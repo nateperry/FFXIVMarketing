@@ -34,7 +34,6 @@ router.get('/profile', function (req, res) {
 });
 
 router.post('/profile', function (req, res) {
-  console.log('req.body =', req.body);
   var jsonUser = utils.getCleanUser(req.user);
   var errors = [], data = {updated_at: new Date().getTime()};
   // TODO: add more validation;
