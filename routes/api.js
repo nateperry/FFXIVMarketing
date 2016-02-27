@@ -6,16 +6,23 @@ var Transaction = require('../model/transaction.js');
 var API_Response = {
   sendSuccessResponse: function (req, res) {
     // instead of returning only the inserted object, reload the entire list
-    Transaction.find({user_id: req.user._id}, function (err, docs) {
-      var response = {};
-      if (err) {
-        API_Response.sendErrorResponse(res, "An error occurred while inserting the entry", req, err);
-        return;
+    var character = req.user.characters[(req.params.character_id || req.body.character_id)];
+    var retainer = character.retainers[req.params.retainer_id || req.body.retainer_id];
+    Transaction.getSalesByRetainer(
+      req.user,
+      character,
+      retainer,
+      function (users) {
+        var response = {};
+        response.result = "OK";
+        response.transactions = users;
+        console.log(response);
+        res.send(response);
+      },
+      function (err) {
+        API_Response.sendErrorResponse(req, res, "An error occurred while inserting the entry", err);
       }
-      response.result = "OK";
-      response.transactions = docs;
-      res.send(response);
-    });
+    );
   },
   sendErrorResponse: function (req, res, msg, error) {
     var response = {};

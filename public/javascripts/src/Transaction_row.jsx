@@ -15,14 +15,14 @@ module.exports = React.createClass({
       data: this.state.transaction,
       success: function (resp) {
         if (Constants.ajax.validateResponse(resp)) {
-          _self.props.onUpdate(resp.transactions);
           _self.uneditRow();
+          _self.props.onUpdate(resp.transactions);
           return;
         }
         alert('An error occurred and your entry was not updated.');
       },
       error: function () {
-        alert('An error occurred and your entry was not udpated.');
+        alert('An error occurred and your entry was not updated.');
       },
       complete: function () {
         // TODO: hide ajaxclassName="date"
@@ -30,6 +30,9 @@ module.exports = React.createClass({
     });
   },
   deleteRow: function () {
+    if (!confirm("are you sure you want to delete this object? This action can not be undone.")) {
+      return false;
+    }
     var _self = this;
     $.ajax({
       url: '/api/delete',
@@ -52,6 +55,9 @@ module.exports = React.createClass({
         // TODO: hide ajaxclassName="date"
       }
     });
+  },
+  onCancel: function () {
+    this.replaceState(this.getInitialState());
   },
   uneditRow: function () {
     this.setState({_edit: false});
@@ -81,7 +87,7 @@ module.exports = React.createClass({
   },
   render: function () {
     if (this.state._edit) {
-      return <EditRow transaction={this.state.transaction} onChange={this.handleChange} onSubmit={this.updateRow} />
+      return <EditRow transaction={this.state.transaction} onChange={this.handleChange} onSubmit={this.updateRow} onCancel={this.onCancel} />
     } else {
       return <ViewRow transaction={this.state.transaction} onEditClick={this.editRow} />
     }

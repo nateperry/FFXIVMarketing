@@ -11,7 +11,11 @@ module.exports = React.createClass({
     };
   },
   onUpdate: function (transactions) {
-    this.setState({transactions: transactions});
+    if (transactions) {
+      this.setState({transactions: transactions});
+    } else {
+      this.setState(this.state);
+    }
   },
   render: function() {
     var _self = this;
@@ -19,7 +23,7 @@ module.exports = React.createClass({
       <table>
         <thead>
         <tr>
-          <th>Item</th>
+          <th colSpan="2">Item</th>
           <th>HQ</th>
           <th>Price</th>
           <th>Quantity</th>
@@ -32,11 +36,11 @@ module.exports = React.createClass({
           <th className="col-delete">&nbsp;</th>
         </tr>
         </thead>
-        <tbody>
-        {this.state.transactions.map(function (row, index) {
-          return <Transaction_row transaction={row} onUpdate={_self.onUpdate} key={index} />;
-        })}
-        <Transaction_new_row owner={this.state.owner} onUpdate={this.onUpdate} />
+          <tbody>
+          {this.state.transactions.map(function (row, index) {
+            return <Transaction_row transaction={row} onUpdate={_self.onUpdate} key={index} />;
+          })}
+          <Transaction_new_row owner={this.state.owner} onUpdate={this.onUpdate} />
         </tbody>
       </table>
     );

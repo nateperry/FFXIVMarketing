@@ -2,6 +2,9 @@
  * Displays a an editable Transaction row
  */
 module.exports = React.createClass({
+  getInitialState: function () {
+    return {transaction: this.props.transaction};
+  },
   componentDidMount: function () {
     var _self = this;
     this._cta = $(ReactDOM.findDOMNode(this));
@@ -17,9 +20,14 @@ module.exports = React.createClass({
     $inputs.first().focus();
   },
   render: function () {
-    var t = this.props.transaction;
+    var t = this.state.transaction;
     return (
       <tr className={this.props.className}>
+        <td>
+          <button type="button" className="button-cancel" onClick={this.props.onCancel}>
+            <i className="fa fa-undo"></i>
+          </button>
+        </td>
         <td>
           <input type="text" name="name" value={t.name} onChange={this.props.onChange} required />
           <input type="hidden" name="character_id" value={t.character_id} readOnly />

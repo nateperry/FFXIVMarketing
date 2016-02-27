@@ -23519,6 +23519,9 @@ module.exports = React.createClass({displayName: "exports",
  * Displays a an editable Transaction row
  */
 module.exports = React.createClass({displayName: "exports",
+  getInitialState: function () {
+    return {transaction: this.props.transaction};
+  },
   componentDidMount: function () {
     var _self = this;
     this._cta = $(ReactDOM.findDOMNode(this));
@@ -23534,9 +23537,14 @@ module.exports = React.createClass({displayName: "exports",
     $inputs.first().focus();
   },
   render: function () {
-    var t = this.props.transaction;
+    var t = this.state.transaction;
     return (
       React.createElement("tr", {className: this.props.className}, 
+        React.createElement("td", null, 
+          React.createElement("button", {type: "button", className: "button-cancel", onClick: this.props.onCancel}, 
+            React.createElement("i", {className: "fa fa-undo"})
+          )
+        ), 
         React.createElement("td", null, 
           React.createElement("input", {type: "text", name: "name", value: t.name, onChange: this.props.onChange, required: true}), 
           React.createElement("input", {type: "hidden", name: "character_id", value: t.character_id, readOnly: true}), 
@@ -23575,10 +23583,12 @@ module.exports = React.createClass({displayName: "exports",
     return (
       React.createElement("tr", {className: (sold)?'sold':''}, 
         React.createElement("td", null, 
-          React.createElement("button", {type: "button", className: "button-edit", onClick: this.props.onEditClick}, React.createElement("i", {className: "fa fa-pencil"})), 
-          React.createElement("span", null, t.name)
+          React.createElement("button", {type: "button", className: "button-edit", onClick: this.props.onEditClick}, 
+            React.createElement("i", {className: "fa fa-pencil"})
+          )
         ), 
-        React.createElement("td", null, t.high_quality?'X':''), 
+        React.createElement("td", {className: "align-left"}, t.name), 
+        React.createElement("td", null, t.high_quality?React.createElement("i", {className: "fa fa-check"}):''), 
         React.createElement("td", null, numeral(t.price_listed).format(Constants.formats.numbers.currency)), 
         React.createElement("td", null, numeral(t.quantity).format()), 
         React.createElement("td", {className: "calc"}, numeral(total_sale_price).format(Constants.formats.numbers.currency)), 
@@ -23587,7 +23597,7 @@ module.exports = React.createClass({displayName: "exports",
         React.createElement("td", null, sold?numeral(t.price_sold).format(Constants.formats.numbers.currency):''), 
         React.createElement("td", {className: "calc"}, sold?numeral(tax_rate).format(Constants.formats.numbers.percent):''), 
         React.createElement("td", {className: "calc"}, sold?numeral(tax_amount).format(Constants.formats.numbers.currency):''), 
-        React.createElement("td", {className: "col-delete"}, sold?'':React.createElement("button", {type: "button", className: "button-delete", onClick: this.deleteRow}, React.createElement("i", {className: "fa fa-times"})))
+        React.createElement("td", {className: "col-delete"}, React.createElement("button", {type: "button", className: "button-delete", onClick: this.deleteRow}, React.createElement("i", {className: "fa fa-times"})))
       )
     )
   }
@@ -23733,14 +23743,14 @@ module.exports = React.createClass({displayName: "exports",
       data: this.state.transaction,
       success: function (resp) {
         if (Constants.ajax.validateResponse(resp)) {
-          _self.props.onUpdate(resp.transactions);
           _self.uneditRow();
+          _self.props.onUpdate(resp.transactions);
           return;
         }
         alert('An error occurred and your entry was not updated.');
       },
       error: function () {
-        alert('An error occurred and your entry was not udpated.');
+        alert('An error occurred and your entry was not updated.');
       },
       complete: function () {
         // TODO: hide ajaxclassName="date"
@@ -23748,6 +23758,9 @@ module.exports = React.createClass({displayName: "exports",
     });
   },
   deleteRow: function () {
+    if (!confirm("are you sure you want to delete this object? This action can not be undone.")) {
+      return false;
+    }
     var _self = this;
     $.ajax({
       url: '/api/delete',
@@ -23770,6 +23783,9 @@ module.exports = React.createClass({displayName: "exports",
         // TODO: hide ajaxclassName="date"
       }
     });
+  },
+  onCancel: function () {
+    this.replaceState(this.getInitialState());
   },
   uneditRow: function () {
     this.setState({_edit: false});
@@ -23799,7 +23815,7 @@ module.exports = React.createClass({displayName: "exports",
   },
   render: function () {
     if (this.state._edit) {
-      return React.createElement(EditRow, {transaction: this.state.transaction, onChange: this.handleChange, onSubmit: this.updateRow})
+      return React.createElement(EditRow, {transaction: this.state.transaction, onChange: this.handleChange, onSubmit: this.updateRow, onCancel: this.onCancel})
     } else {
       return React.createElement(ViewRow, {transaction: this.state.transaction, onEditClick: this.editRow})
     }
@@ -23820,7 +23836,11 @@ module.exports = React.createClass({displayName: "exports",
     };
   },
   onUpdate: function (transactions) {
-    this.setState({transactions: transactions});
+    if (transactions) {
+      this.setState({transactions: transactions});
+    } else {
+      this.setState(this.state);
+    }
   },
   render: function() {
     var _self = this;
@@ -23828,7 +23848,7 @@ module.exports = React.createClass({displayName: "exports",
       React.createElement("table", null, 
         React.createElement("thead", null, 
         React.createElement("tr", null, 
-          React.createElement("th", null, "Item"), 
+          React.createElement("th", {colSpan: "2"}, "Item"), 
           React.createElement("th", null, "HQ"), 
           React.createElement("th", null, "Price"), 
           React.createElement("th", null, "Quantity"), 
@@ -23841,11 +23861,11 @@ module.exports = React.createClass({displayName: "exports",
           React.createElement("th", {className: "col-delete"}, " ")
         )
         ), 
-        React.createElement("tbody", null, 
-        this.state.transactions.map(function (row, index) {
-          return React.createElement(Transaction_row, {transaction: row, onUpdate: _self.onUpdate, key: index});
-        }), 
-        React.createElement(Transaction_new_row, {owner: this.state.owner, onUpdate: this.onUpdate})
+          React.createElement("tbody", null, 
+          this.state.transactions.map(function (row, index) {
+            return React.createElement(Transaction_row, {transaction: row, onUpdate: _self.onUpdate, key: index});
+          }), 
+          React.createElement(Transaction_new_row, {owner: this.state.owner, onUpdate: this.onUpdate})
         )
       )
     );

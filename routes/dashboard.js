@@ -128,19 +128,16 @@ router.get('/sales', function (req, res) {
 router.get('/sales/:character_id/:retainer_id', function (req, res, next) {
   var character = req.user.characters[req.params.character_id];
   var retainer = character.retainers[req.params.retainer_id];
-  Transaction.find({
-    user_id: req.user._id,
-    character_id: character._id,
-    retainer_id: retainer._id
-  }, function (err, docs) {
-    if (err) throw err;
+  Transaction.getSalesByRetainer(req.user, character, retainer, function (user) {
     res.render('sales', {
       title: 'Sales',
       user: req.user,
       character: character,
       retainer: retainer,
-      transactions: JSON.stringify(docs)
+      transactions: JSON.stringify(user)
     });
+  }, function (err) {
+    throw err;
   });
 });
 

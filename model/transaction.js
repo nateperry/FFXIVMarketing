@@ -1,16 +1,6 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-
-/*{
-  "name": "Weak Silencing Potion",
-  "price_listed": 1000,
-  "price_sold": 950,
-  "quantity": 10,
-  "date_listed": 1451088000,
-  "date_sold": 1451088000
-};*/
-
 // create a schema
 var transactionSchema = new Schema({
   date_listed: {type: Number, required: true},
@@ -27,6 +17,39 @@ var transactionSchema = new Schema({
   updated_at: Number
 });
 
+/** ===============
+ ** STATIC METHODS
+ ** ===============
+ **/
+
+
+/**
+ * Retreive all sales for the current request's retainer
+ * @param user - the user to look for
+ * @param character - the character to look for
+ * @param retainer - the retainer to look for
+ * @param successFn - what to do when complete
+ * @param errorFn - what to do event of error
+ */
+transactionSchema.statics.getSalesByRetainer = function (user, character, retainer, successFn, errorFn) {
+  console.log(user, character, retainer);
+  this.find({
+    user_id: user._id,
+    character_id: character._id,
+    retainer_id: retainer._id
+  }, function (err, docs) {
+    if (err) {
+      errorFn.call(null, err);
+      return;
+    }
+    successFn.call(null, docs);
+  });
+};
+
+/** ===============
+ ** INSTANCE METHODS
+ ** ===============
+ **/
 transactionSchema.methods.isSold = function () {
   return (this.price_sold > 0 && this.date_sold);
 };
@@ -43,6 +66,10 @@ transactionSchema.methods.taxRate = function () {
   return (this.taxAmount() / this.salePrice());
 };
 
+/** ===============
+ ** EVENT HANDLERS
+ ** ===============
+ **/
 // on every save, pre process the data
 transactionSchema.pre('save', function(next) {
   // get the current date
