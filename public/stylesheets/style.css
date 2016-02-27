@@ -503,6 +503,7 @@ a:hover, a:focus {
 }
 
 input[type=text],
+input[type=date],
 input[type=email],
 input[type=password] {
   background-color: transparent;
@@ -513,6 +514,7 @@ input[type=password] {
   width: 100%;
 }
 input[type=text]:focus,
+input[type=date]:focus,
 input[type=email]:focus,
 input[type=password]:focus {
   border-color: #ce8107;
@@ -520,6 +522,7 @@ input[type=password]:focus {
   outline: none;
 }
 input[type=text].invalid,
+input[type=date].invalid,
 input[type=email].invalid,
 input[type=password].invalid {
   border-color: #B12419;
@@ -572,8 +575,9 @@ table {
   width: 100%;
 }
 table td, table th {
+  height: 42px;
   text-align: center;
-  padding: 4px 6px;
+  padding: 0 4px;
 }
 table td:first-child, table th:first-child {
   text-align: left;
@@ -593,6 +597,7 @@ table td.input-col {
 }
 table td.input-col input[type=text],
 table td.input-col input[type=email],
+table td.input-col input[type=date],
 table td.input-col input[type=password] {
   display: block;
   width: 100% !important;
@@ -661,6 +666,62 @@ input[type=button].button-large,
 input[type=reset].button-large,
 input[type=submit].button-large {
   padding: 8px 10px;
+}
+button.button-icon, button.button-edit, button.button-submit, button.button-delete,
+a.button.button-icon,
+a.button.button-edit,
+a.button.button-submit,
+a.button.button-delete,
+input[type=button].button-icon,
+input[type=button].button-edit,
+input[type=button].button-submit,
+input[type=button].button-delete,
+input[type=reset].button-icon,
+input[type=reset].button-edit,
+input[type=reset].button-submit,
+input[type=reset].button-delete,
+input[type=submit].button-icon,
+input[type=submit].button-edit,
+input[type=submit].button-submit,
+input[type=submit].button-delete {
+  padding: 0;
+  background-color: transparent;
+  color: #0F6F7B;
+}
+button.button-icon:hover, button.button-icon:active, button.button-edit:hover, button.button-edit:active, button.button-submit:hover, button.button-submit:active, button.button-delete:hover, button.button-delete:active,
+a.button.button-icon:hover,
+a.button.button-icon:active,
+a.button.button-edit:hover,
+a.button.button-edit:active,
+a.button.button-submit:hover,
+a.button.button-submit:active,
+a.button.button-delete:hover,
+a.button.button-delete:active,
+input[type=button].button-icon:hover,
+input[type=button].button-icon:active,
+input[type=button].button-edit:hover,
+input[type=button].button-edit:active,
+input[type=button].button-submit:hover,
+input[type=button].button-submit:active,
+input[type=button].button-delete:hover,
+input[type=button].button-delete:active,
+input[type=reset].button-icon:hover,
+input[type=reset].button-icon:active,
+input[type=reset].button-edit:hover,
+input[type=reset].button-edit:active,
+input[type=reset].button-submit:hover,
+input[type=reset].button-submit:active,
+input[type=reset].button-delete:hover,
+input[type=reset].button-delete:active,
+input[type=submit].button-icon:hover,
+input[type=submit].button-icon:active,
+input[type=submit].button-edit:hover,
+input[type=submit].button-edit:active,
+input[type=submit].button-submit:hover,
+input[type=submit].button-submit:active,
+input[type=submit].button-delete:hover,
+input[type=submit].button-delete:active {
+  color: #1598a8;
 }
 
 .header {

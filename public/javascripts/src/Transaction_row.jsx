@@ -2,20 +2,44 @@
  * Display a Transaction as a table row
  */
 
+var EditRow = require('./Transaction/Row_Edit.jsx');
+var ViewRow = require('./Transaction/Row_View.jsx');
+
 module.exports = React.createClass({
+  updateRow: function () {
+    var _self = this;
+    $.ajax({
+      url: '/api/update',
+      dataType: 'json',
+      method: 'POST',
+      data: this.state.transaction,
+      success: function (resp) {
+        if (Constants.ajax.validateResponse(resp)) {
+          _self.props.onUpdate(resp.transactions);
+          _self.uneditRow();
+          return;
+        }
+        alert('An error occurred and your entry was not updated.');
+      },
+      error: function () {
+        alert('An error occurred and your entry was not udpated.');
+      },
+      complete: function () {
+        // TODO: hide ajaxclassName="date"
+      }
+    });
+  },
   deleteRow: function () {
-    var state = this.getInitialState();
     var _self = this;
     $.ajax({
       url: '/api/delete',
       dataType: 'json',
       data: {
-        id: state.id
+        id: this.state.transaction._id
       },
       method: 'POST',
       success: function (resp) {
         if (Constants.ajax.validateResponse(resp)) {
-          _self.setState(_self.getInitialState());
           _self.props.onUpdate(resp.transactions);
           return;
         }
@@ -29,29 +53,37 @@ module.exports = React.createClass({
       }
     });
   },
+  uneditRow: function () {
+    this.setState({_edit: false});
+  },
+  editRow: function () {
+    this.setState({_edit: true});
+  },
   getInitialState: function () {
-    return {id: this.props.transaction._id}
+    return {
+      _edit: false,
+      transaction: this.props.transaction
+    };
+  },
+  handleChange: function(event) {
+    if (event.target.type == 'checkbox') {
+      this.state.transaction[event.target.name] = event.target.checked;
+    } else if (event.target.type == 'date') {
+      if (event.target.value.trim()) {
+        this.state.transaction[event.target.name] = '';
+      } else {
+        this.state.transaction[event.target.name] = moment(event.target.value, Constants.formats.dates.input).unix();
+      }
+    } else {
+      this.state.transaction[event.target.name] = event.target.value;
+    }
+    this.setState({transaction: this.state.transaction});
   },
   render: function () {
-    var t = this.props.transaction;
-    var total_sale_price = t.price_listed * t.quantity;
-    var tax_amount = total_sale_price - t.price_sold;
-    var tax_rate = (tax_amount) / total_sale_price;
-    var sold = (t.price_sold > 0);
-    return (
-      <tr className={(sold)?'sold':''}>
-        <td>{t.name}</td>
-        <td>{t.high_quality?'X':''}</td>
-        <td>{numeral(t.price_listed).format(Constants.formats.numbers.currency)}</td>
-        <td>{numeral(t.quantity).format()}</td>
-        <td className="calc">{numeral(total_sale_price).format(Constants.formats.numbers.currency)}</td>
-        <td>{moment.unix(t.date_listed).format(Constants.formats.dates.display)}</td>
-        <td>{t.date_sold?moment.unix(t.date_sold).format(Constants.formats.dates.display):''}</td>
-        <td>{sold?numeral(t.price_sold).format(Constants.formats.numbers.currency):''}</td>
-        <td className="calc">{sold?numeral(tax_rate).format(Constants.formats.numbers.percent):''}</td>
-        <td className="calc">{sold?numeral(tax_amount).format(Constants.formats.numbers.currency):''}</td>
-        <td className="col-delete">{sold?'':<button type="button" onClick={this.deleteRow}>X</button>}</td>
-      </tr>
-    )
+    if (this.state._edit) {
+      return <EditRow transaction={this.state.transaction} onChange={this.handleChange} onSubmit={this.updateRow} />
+    } else {
+      return <ViewRow transaction={this.state.transaction} onEditClick={this.editRow} />
+    }
   }
 });

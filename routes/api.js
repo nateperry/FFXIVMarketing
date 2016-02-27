@@ -40,11 +40,13 @@ router.all('/', function (req, res, next) {
   });
 });
 
+/**
+ * Adds a new transaction
+ */
 router.post('/insert', function (req, res) {
   if (req.body.user_id == undefined) {
     req.body.user_id = req.user._id;
   }
-
   var t = new Transaction(req.body);
   t.save(function (err) {
     if (err) {
@@ -55,6 +57,32 @@ router.post('/insert', function (req, res) {
   });
 });
 
+/**
+ * Update a given entry
+ */
+router.post('/update', function (req, res) {
+  if (req.body.user_id == undefined) {
+    req.body.user_id = req.user._id;
+  }
+  var t = new Transaction(req.body);
+  Transaction.findOne({_id: req.body._id, user_id: req.body.user_id}, function (err, transaction) {
+    if (err || !transaction) {
+      API_Response.sendErrorResponse(req, res, "An error occurred while updating the entry", err);
+      return;
+    }
+    Transaction.update({_id: transaction._id}, req.body, {}, function (err) {
+      if (err) {
+        API_Response.sendErrorResponse(req, res, "An error occurred while updating the entry", err);
+        return;
+      }
+      API_Response.sendSuccessResponse(req, res);
+    });
+  });
+});
+
+/**
+ * Deletes a transaction
+ */
 router.post('/delete', function (req, res) {
   if (!req.body.id) {
     API_Response.sendErrorResponse(req, res, "Invalid id submitted.");

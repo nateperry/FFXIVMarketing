@@ -96,12 +96,8 @@ module.exports = React.createClass({
     obj[event.target.name] = event.target.checked;
     this.setState(obj);
   },
-  handleChange: function(event) {
-    var obj = {};
-    obj[event.target.name] = event.target.value.trim();
-    this.setState(obj);
-  },
   render: function () {
+    return (<tr></tr>);
     return (
       <tr className="new-transaction">
         <td>

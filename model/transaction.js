@@ -31,6 +31,18 @@ transactionSchema.methods.isSold = function () {
   return (this.price_sold > 0 && this.date_sold);
 };
 
+transactionSchema.methods.salePrice = function () {
+  return this.price_listed * this.quantity;
+};
+
+transactionSchema.methods.taxAmount = function () {
+  return (this.salePrice() - this.price_sold);
+};
+
+transactionSchema.methods.taxRate = function () {
+  return (this.taxAmount() / this.salePrice());
+};
+
 // on every save, pre process the data
 transactionSchema.pre('save', function(next) {
   // get the current date
@@ -40,8 +52,24 @@ transactionSchema.pre('save', function(next) {
   this.updated_at = currentDate;
 
   // if created_at doesn't exist, add to that field
-  if (!this.created_at)
+  if (!this.created_at) {
     this.created_at = currentDate;
+  }
+
+  // sanitize some values
+
+  if (this.quantity < 1) {
+    this.quantity = 1;
+  }
+
+  if (this.date_listed > this.date_sold) {
+    this.date_sold = this.date_listed;
+  }
+
+  if (this.price_listed < this.price_sold) {
+    this.price_sold = this.price_listed;
+  }
+
   next();
 });
 

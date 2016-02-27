@@ -5,7 +5,8 @@
 module.exports = {
   formats: {
     dates: {
-      display: 'M/DD/YYYY'
+      display: 'M/DD/YYYY',
+      input: 'YYYY-MM-DD'
     },
     numbers: {
       currency: '$0,0',
@@ -17,7 +18,7 @@ module.exports = {
     validateResponse: function (resp) {
       if (resp.result == 'ERR') {
         if (resp.terminate) {
-          // redirect the user id they are signed out
+          // redirect the user if they are signed out
           alert(resp.message);
           window.location = '/';
         }

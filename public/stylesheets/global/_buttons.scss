@@ -19,4 +19,15 @@ input[type=submit] {
   &.button-large {
     padding: 8px 10px;
   }
+  &.button-icon,
+  &.button-edit,
+  &.button-submit,
+  &.button-delete {
+    padding: 0;
+    background-color: transparent;
+    color: $button-bg;
+    &:hover, &:active {
+      color: $button-bg-hover;
+    }
+  }
 }

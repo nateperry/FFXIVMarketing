@@ -1,8 +1,9 @@
 table {
   width: 100%;
   td, th {
+    height: 42px;
     text-align: center;
-    padding: 4px 6px;
+    padding: 0 4px;
     &:first-child {
       text-align: left;
     }
@@ -22,6 +23,7 @@ table {
       position: relative;
       input[type=text],
       input[type=email],
+      input[type=date],
       input[type=password] {
         display: block;
         width: 100% !important;
