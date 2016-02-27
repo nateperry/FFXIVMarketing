@@ -23538,6 +23538,10 @@ module.exports = React.createClass({displayName: "exports",
   },
   render: function () {
     var t = this.state.transaction;
+    var total_sale_price = t.price_listed * t.quantity;
+    var tax_amount = total_sale_price - t.price_sold;
+    var tax_rate = (tax_amount) / total_sale_price;
+    var sold = (t.price_sold > 0 && t.date_sold);
     return (
       React.createElement("tr", {className: this.props.className}, 
         React.createElement("td", null, 
@@ -23554,11 +23558,12 @@ module.exports = React.createClass({displayName: "exports",
         React.createElement("td", null, React.createElement("input", {type: "checkbox", name: "high_quality", checked: t.high_quality, onChange: this.props.onChange})), 
         React.createElement("td", null, React.createElement("input", {type: "text", name: "price_listed", value: t.price_listed, onChange: this.props.onChange, required: true})), 
         React.createElement("td", null, React.createElement("input", {type: "text", name: "quantity", value: t.quantity, onChange: this.props.onChange, required: true})), 
-        React.createElement("td", null, " "), 
+        React.createElement("td", {className: "calc"}, numeral(total_sale_price).format(Constants.formats.numbers.currency)), 
         React.createElement("td", null, React.createElement("input", {type: "date", name: "date_listed", className: "date", value: moment.unix(t.date_listed).format(Constants.formats.dates.input), onChange: this.props.onChange, required: true})), 
         React.createElement("td", null, React.createElement("input", {type: "date", name: "date_sold", className: "date", value: t.date_sold?moment.unix(t.date_sold).format(Constants.formats.dates.input):'', onChange: this.props.onChange})), 
         React.createElement("td", null, React.createElement("input", {type: "text", name: "price_sold", value: t.price_sold, onChange: this.props.onChange})), 
-        React.createElement("td", {colSpan: "2"}, " "), 
+        React.createElement("td", {className: "calc"}, sold?numeral(tax_rate).format(Constants.formats.numbers.percent):''), 
+        React.createElement("td", {className: "calc"}, sold?numeral(tax_amount).format(Constants.formats.numbers.currency):''), 
         React.createElement("td", null, 
           React.createElement("button", {type: "button", className: "button-submit", onClick: this.props.onSubmit}, 
             React.createElement("i", {className: "fa fa-save"})
@@ -23592,8 +23597,8 @@ module.exports = React.createClass({displayName: "exports",
         React.createElement("td", null, numeral(t.price_listed).format(Constants.formats.numbers.currency)), 
         React.createElement("td", null, numeral(t.quantity).format()), 
         React.createElement("td", {className: "calc"}, numeral(total_sale_price).format(Constants.formats.numbers.currency)), 
-        React.createElement("td", null, moment.unix(t.date_listed).format(Constants.formats.dates.display)), 
-        React.createElement("td", null, t.date_sold?moment.unix(t.date_sold).format(Constants.formats.dates.display):''), 
+        React.createElement("td", {className: "align-left"}, moment.unix(t.date_listed).format(Constants.formats.dates.display)), 
+        React.createElement("td", {className: "align-left"}, sold?moment.unix(t.date_sold).format(Constants.formats.dates.display):''), 
         React.createElement("td", null, sold?numeral(t.price_sold).format(Constants.formats.numbers.currency):''), 
         React.createElement("td", {className: "calc"}, sold?numeral(tax_rate).format(Constants.formats.numbers.percent):''), 
         React.createElement("td", {className: "calc"}, sold?numeral(tax_amount).format(Constants.formats.numbers.currency):''), 
@@ -23734,6 +23739,12 @@ var EditRow = require('./Transaction/Row_Edit.jsx');
 var ViewRow = require('./Transaction/Row_View.jsx');
 
 module.exports = React.createClass({displayName: "exports",
+  getInitialState: function () {
+    return {
+      _edit: false,
+      transaction: $.extend(false, this.props.transaction)
+    };
+  },
   updateRow: function () {
     var _self = this;
     $.ajax({
@@ -23785,7 +23796,7 @@ module.exports = React.createClass({displayName: "exports",
     });
   },
   onCancel: function () {
-    this.replaceState(this.getInitialState());
+    this.setState(this.getInitialState());
   },
   uneditRow: function () {
     this.setState({_edit: false});
@@ -23793,17 +23804,11 @@ module.exports = React.createClass({displayName: "exports",
   editRow: function () {
     this.setState({_edit: true});
   },
-  getInitialState: function () {
-    return {
-      _edit: false,
-      transaction: this.props.transaction
-    };
-  },
   handleChange: function(event) {
     if (event.target.type == 'checkbox') {
       this.state.transaction[event.target.name] = event.target.checked;
     } else if (event.target.type == 'date') {
-      if (event.target.value.trim()) {
+      if (event.target.value.trim() == '') {
         this.state.transaction[event.target.name] = '';
       } else {
         this.state.transaction[event.target.name] = moment(event.target.value, Constants.formats.dates.input).unix();
@@ -23853,8 +23858,8 @@ module.exports = React.createClass({displayName: "exports",
           React.createElement("th", null, "Price"), 
           React.createElement("th", null, "Quantity"), 
           React.createElement("th", null, "Sale Price"), 
-          React.createElement("th", null, "List Date"), 
-          React.createElement("th", null, "Sell Date"), 
+          React.createElement("th", {className: "align-left"}, "List Date"), 
+          React.createElement("th", {className: "align-left"}, "Sell Date"), 
           React.createElement("th", null, "Sell Price"), 
           React.createElement("th", {className: "tax"}, "Tax Rate"), 
           React.createElement("th", null, "Tax Paid"), 

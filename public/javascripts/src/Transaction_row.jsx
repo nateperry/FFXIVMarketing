@@ -6,6 +6,12 @@ var EditRow = require('./Transaction/Row_Edit.jsx');
 var ViewRow = require('./Transaction/Row_View.jsx');
 
 module.exports = React.createClass({
+  getInitialState: function () {
+    return {
+      _edit: false,
+      transaction: $.extend(false, this.props.transaction)
+    };
+  },
   updateRow: function () {
     var _self = this;
     $.ajax({
@@ -57,7 +63,7 @@ module.exports = React.createClass({
     });
   },
   onCancel: function () {
-    this.replaceState(this.getInitialState());
+    this.setState(this.getInitialState());
   },
   uneditRow: function () {
     this.setState({_edit: false});
@@ -65,17 +71,11 @@ module.exports = React.createClass({
   editRow: function () {
     this.setState({_edit: true});
   },
-  getInitialState: function () {
-    return {
-      _edit: false,
-      transaction: this.props.transaction
-    };
-  },
   handleChange: function(event) {
     if (event.target.type == 'checkbox') {
       this.state.transaction[event.target.name] = event.target.checked;
     } else if (event.target.type == 'date') {
-      if (event.target.value.trim()) {
+      if (event.target.value.trim() == '') {
         this.state.transaction[event.target.name] = '';
       } else {
         this.state.transaction[event.target.name] = moment(event.target.value, Constants.formats.dates.input).unix();

@@ -32,7 +32,6 @@ var transactionSchema = new Schema({
  * @param errorFn - what to do event of error
  */
 transactionSchema.statics.getSalesByRetainer = function (user, character, retainer, successFn, errorFn) {
-  console.log(user, character, retainer);
   this.find({
     user_id: user._id,
     character_id: character._id,

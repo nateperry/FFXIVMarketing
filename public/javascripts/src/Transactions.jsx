@@ -28,8 +28,8 @@ module.exports = React.createClass({
           <th>Price</th>
           <th>Quantity</th>
           <th>Sale Price</th>
-          <th>List Date</th>
-          <th>Sell Date</th>
+          <th className="align-left">List Date</th>
+          <th className="align-left">Sell Date</th>
           <th>Sell Price</th>
           <th className="tax">Tax Rate</th>
           <th>Tax Paid</th>
