@@ -6,7 +6,7 @@ var transactionSchema = new Schema({
   date_listed: {type: Number, required: true},
   date_sold: Number,
   high_quality: Boolean,
-  name: {type: String, required: true},
+  name: {type: String, trim: true, required: true},
   price_listed: {type: Number, required: true},
   price_sold: Number,
   quantity: {type: Number, required: true},
@@ -36,7 +36,9 @@ transactionSchema.statics.getSalesByRetainer = function (user, character, retain
     user_id: user._id,
     character_id: character._id,
     retainer_id: retainer._id
-  }, function (err, docs) {
+  }).sort({
+    _id: 'desc'
+  }).exec(function (err, docs) {
     if (err) {
       errorFn.call(null, err);
       return;

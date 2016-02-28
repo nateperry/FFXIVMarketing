@@ -25,7 +25,7 @@ module.exports = React.createClass({
         <td>{sold?numeral(t.price_sold).format(Constants.formats.numbers.currency):''}</td>
         <td className="calc">{sold?numeral(tax_rate).format(Constants.formats.numbers.percent):''}</td>
         <td className="calc">{sold?numeral(tax_amount).format(Constants.formats.numbers.currency):''}</td>
-        <td className="col-delete">{<button type="button" className="button-delete" onClick={this.deleteRow}><i className="fa fa-times"></i></button>}</td>
+        <td className="col-action">{<button type="button" className="button-delete" onClick={this.props.onDeleteClick}><i className="fa fa-times"></i></button>}</td>
       </tr>
     )
   }

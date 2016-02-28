@@ -16,7 +16,6 @@ var API_Response = {
         var response = {};
         response.result = "OK";
         response.transactions = users;
-        console.log(response);
         res.send(response);
       },
       function (err) {

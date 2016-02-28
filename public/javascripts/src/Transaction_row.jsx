@@ -4,13 +4,58 @@
 
 var EditRow = require('./Transaction/Row_Edit.jsx');
 var ViewRow = require('./Transaction/Row_View.jsx');
+var NewRow = require('./Row_New.jsx');
 
 module.exports = React.createClass({
   getInitialState: function () {
     return {
       _edit: false,
-      transaction: $.extend(false, this.props.transaction)
+      _original: $.extend(false, this.props.transaction)
     };
+  },
+  insertRow: function () {
+    var _self = this;
+    var _cta = $(ReactDOM.findDOMNode(this));
+    var valid = Constants.validateTransaction(this.props.transaction);
+    if (valid != true) {
+      var errorStr = '';
+      for (var i=0; i < valid.length; i++) {
+        var error = valid[i];
+        errorStr += error.msg + '\n';
+        _cta.find('input[name='+error.prop+']').addClass('invalid');
+      }
+      alert('Validation Error:'+errorStr);
+      return false;
+    }
+    // now submit the form
+    $.ajax({
+      url: '/api/insert',
+      dataType: 'json',
+      data: this.props.transaction,
+      method: 'POST',
+      success: function (resp) {
+        if (Constants.ajax.validateResponse(resp)) {
+          _self.props.onUpdate(resp.transactions);
+          _cta.find('input[name=name]').focus();
+          return;
+        }
+        var errorStr = '';
+        if (resp.error.errors) {
+          for (var key in resp.error.errors) {
+            _cta.find('input[name='+key+']').addClass('invalid');
+            errorStr += resp.error.errors[key].message + '\n';
+          }
+        }
+        conole.log('error');
+        alert(resp.message + '\n' + errorStr);
+      },
+      error: function () {
+        alert('An error occurred and your entry was not added');
+      },
+      complete: function () {
+        // TODO: hide ajaxclassName="date"
+      }
+    });
   },
   updateRow: function () {
     var _self = this;
@@ -18,7 +63,7 @@ module.exports = React.createClass({
       url: '/api/update',
       dataType: 'json',
       method: 'POST',
-      data: this.state.transaction,
+      data: this.props.transaction,
       success: function (resp) {
         if (Constants.ajax.validateResponse(resp)) {
           _self.uneditRow();
@@ -44,7 +89,9 @@ module.exports = React.createClass({
       url: '/api/delete',
       dataType: 'json',
       data: {
-        id: this.state.transaction._id
+        id: this.props.transaction._id,
+        character_id: this.props.transaction.character_id,
+        retainer_id: this.props.transaction.retainer_id
       },
       method: 'POST',
       success: function (resp) {
@@ -63,7 +110,7 @@ module.exports = React.createClass({
     });
   },
   onCancel: function () {
-    this.setState(this.getInitialState());
+    this.setState({transaction: this.state._original});
   },
   uneditRow: function () {
     this.setState({_edit: false});
@@ -72,24 +119,27 @@ module.exports = React.createClass({
     this.setState({_edit: true});
   },
   handleChange: function(event) {
+    var transaction = this.props.transaction;
     if (event.target.type == 'checkbox') {
-      this.state.transaction[event.target.name] = event.target.checked;
+      transaction[event.target.name] = event.target.checked;
     } else if (event.target.type == 'date') {
       if (event.target.value.trim() == '') {
-        this.state.transaction[event.target.name] = '';
+        transaction[event.target.name] = '';
       } else {
-        this.state.transaction[event.target.name] = moment(event.target.value, Constants.formats.dates.input).unix();
+        transaction[event.target.name] = moment(event.target.value, Constants.formats.dates.input).unix();
       }
     } else {
-      this.state.transaction[event.target.name] = event.target.value;
+      transaction[event.target.name] = event.target.value;
     }
-    this.setState({transaction: this.state.transaction});
+    this.setState({transaction: transaction});
   },
   render: function () {
     if (this.state._edit) {
-      return <EditRow transaction={this.state.transaction} onChange={this.handleChange} onSubmit={this.updateRow} onCancel={this.onCancel} />
+      return <EditRow transaction={this.props.transaction} onChange={this.handleChange} onSubmit={this.updateRow} onCancel={this.onCancel} key={this.props.key} />
+    } else if (this.props.isNew) {
+      return <NewRow transaction={this.props.transaction} owner={this.props.owner} onChange={this.handleChange} onSubmit={this.insertRow} />
     } else {
-      return <ViewRow transaction={this.state.transaction} onEditClick={this.editRow} />
+      return <ViewRow transaction={this.props.transaction} onEditClick={this.editRow} onDeleteClick={this.deleteRow} />
     }
   }
 });
