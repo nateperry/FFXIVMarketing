@@ -23,8 +23,20 @@ module.exports = React.createClass({
       retainer_id: owner.retainer_id
     }
   },
+  resetTransaction: function (trans, original) {
+    console.log('resetting');
+    var index = this.state.transactions.findIndex(function (t) {
+      return t._id == trans._id;
+    });
+    this.state.transactions[index] = original;
+    this.setState({transactions: this.state.transactions});
+  },
   onUpdate: function (transactions) {
-    this.setState({transactions: transactions, newTransaction: this.getBaseTransaction()});
+    if (transactions) {
+      this.setState({transactions: transactions, newTransaction: this.getBaseTransaction()});
+    } else {
+      this.setState(this.state);
+    }
   },
   render: function() {
     var _self = this;
@@ -48,7 +60,7 @@ module.exports = React.createClass({
         <tbody>
           <Transaction_row isNew={true} transaction={this.state.newTransaction} owner={this.state.owner} onUpdate={this.onUpdate} key={moment().unix()} />
           {this.state.transactions.map(function (row, index) {
-            return <Transaction_row transaction={row} owner={_self.state.owner} onUpdate={_self.onUpdate} key={index} />;
+            return <Transaction_row transaction={row} owner={_self.state.owner} onUpdate={_self.onUpdate} onCancel={_self.resetTransaction} key={moment().unix()} />;
           })}
         </tbody>
       </table>

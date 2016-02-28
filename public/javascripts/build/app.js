@@ -23546,61 +23546,6 @@ module.exports = React.createClass({displayName: "exports",
 
 },{}],164:[function(require,module,exports){
 /**
- * Display a new Transaction form as a table row
- */
-
-module.exports = React.createClass({displayName: "exports",
-  _cta: null,
-  componentDidMount: function () {
-    var _self = this;
-    var _cta = $(ReactDOM.findDOMNode(this));
-    var $inputs = _cta.find('input');
-    $inputs.on('focus', function () {
-      $(this).removeClass('invalid')
-    });
-    $inputs.on('keypress', function (e) {
-      if (e.which == 13) {
-        _self.submit();
-      }
-    });
-  },
-  submit: function () {
-    this.props.onSubmit();
-  },
-  render: function () {
-    var t = this.props.transaction;
-    var total_sale_price = t.price_listed * t.quantity;
-    var tax_amount = total_sale_price - t.price_sold;
-    var tax_rate = (tax_amount) / total_sale_price;
-    var sold = (t.price_sold > 0 && t.date_sold);
-    return (
-      React.createElement("tr", {className: "new-transaction"}, 
-        React.createElement("td", {colSpan: "2"}, 
-          React.createElement("input", {type: "text", name: "name", value: t.name, onChange: this.props.onChange, required: true}), 
-          React.createElement("input", {type: "hidden", name: "character_id", value: this.props.character_id, readOnly: true}), 
-          React.createElement("input", {type: "hidden", name: "retainer_id", value: this.props.retainer_id, readOnly: true})
-        ), 
-        React.createElement("td", null, React.createElement("input", {type: "checkbox", name: "high_quality", checked: t.high_quality, onChange: this.props.onChange})), 
-        React.createElement("td", null, React.createElement("input", {type: "text", name: "price_listed", value: t.price_listed, onChange: this.props.onChange, required: true})), 
-        React.createElement("td", null, React.createElement("input", {type: "text", name: "quantity", value: t.quantity, onChange: this.props.onChange, required: true})), 
-        React.createElement("td", {className: "calc"}, numeral(total_sale_price).format(Constants.formats.numbers.currency)), 
-        React.createElement("td", null, React.createElement("input", {type: "date", name: "date_listed", className: "date", value: t.date_listed?moment.unix(t.date_listed).format(Constants.formats.dates.input):'', onChange: this.props.onChange, required: true})), 
-        React.createElement("td", null, React.createElement("input", {type: "date", name: "date_sold", className: "date", value: t.date_sold?moment.unix(t.date_sold).format(Constants.formats.dates.input):'', onChange: this.props.onChange})), 
-        React.createElement("td", null, React.createElement("input", {type: "text", name: "price_sold", value: t.price_sold, onChange: this.props.onChange})), 
-        React.createElement("td", {className: "calc"}, sold?numeral(tax_rate).format(Constants.formats.numbers.percent):''), 
-        React.createElement("td", {className: "calc"}, sold?numeral(tax_amount).format(Constants.formats.numbers.currency):''), 
-        React.createElement("td", {className: "col-action"}, 
-          React.createElement("button", {type: "button", className: "button button-submit", onClick: this.submit}, 
-            React.createElement("i", {className: "fa fa-plus"})
-          )
-        )
-      )
-    )
-  }
-});
-
-},{}],165:[function(require,module,exports){
-/**
  * Displays a an editable Transaction row
  */
 module.exports = React.createClass({displayName: "exports",
@@ -23656,6 +23601,61 @@ module.exports = React.createClass({displayName: "exports",
   }
 });
 
+},{}],165:[function(require,module,exports){
+/**
+ * Display a new Transaction form as a table row
+ */
+
+module.exports = React.createClass({displayName: "exports",
+  _cta: null,
+  componentDidMount: function () {
+    var _self = this;
+    var _cta = $(ReactDOM.findDOMNode(this));
+    var $inputs = _cta.find('input');
+    $inputs.on('focus', function () {
+      $(this).removeClass('invalid')
+    });
+    $inputs.on('keypress', function (e) {
+      if (e.which == 13) {
+        _self.submit();
+      }
+    });
+  },
+  submit: function () {
+    this.props.onSubmit();
+  },
+  render: function () {
+    var t = this.props.transaction;
+    var total_sale_price = t.price_listed * t.quantity;
+    var tax_amount = total_sale_price - t.price_sold;
+    var tax_rate = (tax_amount) / total_sale_price;
+    var sold = (t.price_sold > 0 && t.date_sold);
+    return (
+      React.createElement("tr", {className: "new-transaction"}, 
+        React.createElement("td", {colSpan: "2"}, 
+          React.createElement("input", {type: "text", name: "name", value: t.name, onChange: this.props.onChange, required: true}), 
+          React.createElement("input", {type: "hidden", name: "character_id", value: this.props.character_id, readOnly: true}), 
+          React.createElement("input", {type: "hidden", name: "retainer_id", value: this.props.retainer_id, readOnly: true})
+        ), 
+        React.createElement("td", null, React.createElement("input", {type: "checkbox", name: "high_quality", checked: t.high_quality, onChange: this.props.onChange})), 
+        React.createElement("td", null, React.createElement("input", {type: "text", name: "price_listed", value: t.price_listed, onChange: this.props.onChange, required: true})), 
+        React.createElement("td", null, React.createElement("input", {type: "text", name: "quantity", value: t.quantity, onChange: this.props.onChange, required: true})), 
+        React.createElement("td", {className: "calc"}, numeral(total_sale_price).format(Constants.formats.numbers.currency)), 
+        React.createElement("td", null, React.createElement("input", {type: "date", name: "date_listed", className: "date", value: t.date_listed?moment.unix(t.date_listed).format(Constants.formats.dates.input):'', onChange: this.props.onChange, required: true})), 
+        React.createElement("td", null, React.createElement("input", {type: "date", name: "date_sold", className: "date", value: t.date_sold?moment.unix(t.date_sold).format(Constants.formats.dates.input):'', onChange: this.props.onChange})), 
+        React.createElement("td", null, React.createElement("input", {type: "text", name: "price_sold", value: t.price_sold, onChange: this.props.onChange})), 
+        React.createElement("td", {className: "calc"}, sold?numeral(tax_rate).format(Constants.formats.numbers.percent):''), 
+        React.createElement("td", {className: "calc"}, sold?numeral(tax_amount).format(Constants.formats.numbers.currency):''), 
+        React.createElement("td", {className: "col-action"}, 
+          React.createElement("button", {type: "button", className: "button button-submit", onClick: this.submit}, 
+            React.createElement("i", {className: "fa fa-plus"})
+          )
+        )
+      )
+    )
+  }
+});
+
 },{}],166:[function(require,module,exports){
 /**
  * Displays a static Transaction row
@@ -23697,7 +23697,7 @@ module.exports = React.createClass({displayName: "exports",
 
 var EditRow = require('./Transaction/Row_Edit.jsx');
 var ViewRow = require('./Transaction/Row_View.jsx');
-var NewRow = require('./Row_New.jsx');
+var NewRow  = require('./Transaction/Row_New.jsx');
 
 module.exports = React.createClass({displayName: "exports",
   getInitialState: function () {
@@ -23739,7 +23739,6 @@ module.exports = React.createClass({displayName: "exports",
             errorStr += resp.error.errors[key].message + '\n';
           }
         }
-        conole.log('error');
         alert(resp.message + '\n' + errorStr);
       },
       error: function () {
@@ -23803,7 +23802,7 @@ module.exports = React.createClass({displayName: "exports",
     });
   },
   onCancel: function () {
-    this.setState({transaction: this.state._original});
+    this.props.onCancel(this.props.transaction, this.state._original);
   },
   uneditRow: function () {
     this.setState({_edit: false});
@@ -23837,7 +23836,7 @@ module.exports = React.createClass({displayName: "exports",
   }
 });
 
-},{"./Row_New.jsx":164,"./Transaction/Row_Edit.jsx":165,"./Transaction/Row_View.jsx":166}],168:[function(require,module,exports){
+},{"./Transaction/Row_Edit.jsx":164,"./Transaction/Row_New.jsx":165,"./Transaction/Row_View.jsx":166}],168:[function(require,module,exports){
 var Transaction_row = require('./Transaction_row.jsx');
 
 module.exports = React.createClass({displayName: "exports",
@@ -23863,8 +23862,20 @@ module.exports = React.createClass({displayName: "exports",
       retainer_id: owner.retainer_id
     }
   },
+  resetTransaction: function (trans, original) {
+    console.log('resetting');
+    var index = this.state.transactions.findIndex(function (t) {
+      return t._id == trans._id;
+    });
+    this.state.transactions[index] = original;
+    this.setState({transactions: this.state.transactions});
+  },
   onUpdate: function (transactions) {
-    this.setState({transactions: transactions, newTransaction: this.getBaseTransaction()});
+    if (transactions) {
+      this.setState({transactions: transactions, newTransaction: this.getBaseTransaction()});
+    } else {
+      this.setState(this.state);
+    }
   },
   render: function() {
     var _self = this;
@@ -23888,7 +23899,7 @@ module.exports = React.createClass({displayName: "exports",
         React.createElement("tbody", null, 
           React.createElement(Transaction_row, {isNew: true, transaction: this.state.newTransaction, owner: this.state.owner, onUpdate: this.onUpdate, key: moment().unix()}), 
           this.state.transactions.map(function (row, index) {
-            return React.createElement(Transaction_row, {transaction: row, owner: _self.state.owner, onUpdate: _self.onUpdate, key: index});
+            return React.createElement(Transaction_row, {transaction: row, owner: _self.state.owner, onUpdate: _self.onUpdate, onCancel: _self.resetTransaction, key: moment().unix()});
           })
         )
       )

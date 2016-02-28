@@ -46,7 +46,6 @@ module.exports = React.createClass({
             errorStr += resp.error.errors[key].message + '\n';
           }
         }
-        conole.log('error');
         alert(resp.message + '\n' + errorStr);
       },
       error: function () {
@@ -110,7 +109,7 @@ module.exports = React.createClass({
     });
   },
   onCancel: function () {
-    this.setState({transaction: this.state._original});
+    this.props.onCancel(this.props.transaction, this.state._original);
   },
   uneditRow: function () {
     this.setState({_edit: false});
