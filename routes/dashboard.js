@@ -40,19 +40,17 @@ router.post('/profile', function (req, res) {
   // validate email uniqueness
   if (req.body.email.trim()) {
     User.findOne({email: req.body.email.trim()}, function (err, user) {
-      if (err) {
+      if (err || !user) {
         return res.render('profile', {user: req.user, userJSON: JSON.stringify(jsonUser), errors:['An error occurred updating your profile in the database. Please try again.']});
       }
-      if (user) {
-        // if a user is found, make sure the requested user is the same as the authenticated user
-        if (user._id != req.user._id) {
-          errors.push('A user with that email already exists.');
-          return res.render('profile', {user: req.user, userJSON: JSON.stringify(jsonUser), errors: errors});
-        }
+      // if a user is found, make sure the requested user is the same as the authenticated user
+      if (user._id != req.body.user_id) {
+        errors.push('A user with that email already exists.');
+        return res.render('profile', {user: req.user, userJSON: JSON.stringify(jsonUser), errors: errors});
       }
       data['email'] = req.body.email.trim();
       // validate password
-      if (req.body.new_password.trim()) {
+      if (req.body.new_password) {
         if (req.body.new_password.trim() !== req.body.conf_password.trim()) {
           errors.push('Passwords must match');
         } else {

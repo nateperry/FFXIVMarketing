@@ -8,7 +8,7 @@ var utils = require('../utils');
 // load the homepage
 router.get('/', function(req, res, next) {
   req.app.set("view options", { layout: "layout.hbs" });
-  utils.isValidUser(req, function (valid) {
+  utils.isValidUser(req, res, function (valid) {
     if (valid) {
       return res.redirect('/app');
     } else {

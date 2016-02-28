@@ -13,6 +13,23 @@ var userSchema = new Schema({
   updated_at: Number
 });
 
+/** ===============
+ ** STATIC METHODS
+ ** ===============
+ **/
+userSchema.statics.getUser = function (queryArgs, succesFn, errorFn) {
+  this.findOne(
+    queryArgs,
+    function (err, docs) {
+      if (err || !docs) {
+        errorFn.call(null, err);
+      } else {
+        succesFn.call(null, docs);
+      }
+    }
+  )
+};
+
 // on every save, pre process the data
 userSchema.pre('save', function(next) {
   // get the current date

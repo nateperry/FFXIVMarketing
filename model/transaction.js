@@ -24,7 +24,7 @@ var transactionSchema = new Schema({
 
 
 /**
- * Retreive all sales for the current request's retainer
+ * Retrieve all sales for the current request's retainer
  * @param user - the user to look for
  * @param character - the character to look for
  * @param retainer - the retainer to look for
