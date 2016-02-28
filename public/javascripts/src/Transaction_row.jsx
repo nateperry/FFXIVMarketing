@@ -4,7 +4,7 @@
 
 var EditRow = require('./Transaction/Row_Edit.jsx');
 var ViewRow = require('./Transaction/Row_View.jsx');
-var NewRow = require('./Row_New.jsx');
+var NewRow  = require('./Transaction/Row_New.jsx');
 
 module.exports = React.createClass({
   getInitialState: function () {
