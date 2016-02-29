@@ -72,7 +72,7 @@ app.use('/', users);
  * Route middleware to authenticate and check token
  * =======================*/
 app.use(function (req, res, next) {
-  utils.isValidUser(req, function (valid) {
+  utils.isValidUser(req, res, function (valid) {
     if (valid) {
       req.app.set("view options", { layout: "layout-app.hbs" });
       next();

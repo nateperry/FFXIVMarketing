@@ -23326,7 +23326,8 @@ module.exports = require('./lib/React');
 module.exports = {
   formats: {
     dates: {
-      display: 'M/DD/YYYY'
+      display: 'M/DD/YYYY',
+      input: 'YYYY-MM-DD'
     },
     numbers: {
       currency: '$0,0',
@@ -23338,7 +23339,7 @@ module.exports = {
     validateResponse: function (resp) {
       if (resp.result == 'ERR') {
         if (resp.terminate) {
-          // redirect the user id they are signed out
+          // redirect the user if they are signed out
           alert(resp.message);
           window.location = '/';
         }
@@ -23347,6 +23348,36 @@ module.exports = {
         return true;
       }
       return false;
+    }
+  },
+  validateTransaction: function (t) {
+    var errors = [];
+    if (!t.name) {
+      errors.push({prop: 'name', msg:'Invalid item name'});
+    }
+    if (!(t.price_listed > 0)) {
+      errors.push({prop: 'price_listed', msg:'Invalid price listed'});
+    }
+    if (!(t.quantity > 0)) {
+      errors.push({prop: 'quantity', msg:'Invalid quantity'});
+    }
+    if (!moment(t.date_listed).isValid()) {
+      errors.push({prop: 'date_listed', msg:'Invalid list date'});
+    }
+    if (t.date_sold) {
+      if (!moment(t.date_sold).isValid()) {
+        errors.push({prop: 'date_sold', msg:'Invalid sold date'});
+      }
+    }
+    if (t.price_sold) {
+      if (!(t.price_sold > 0)) {
+        errors.push({prop: 'price_sold', msg:'Invalid price sold'});
+      }
+    }
+    if (errors.length > 0) {
+      return errors;
+    } else {
+      return true;
     }
   }
 };
@@ -23515,27 +23546,72 @@ module.exports = React.createClass({displayName: "exports",
 
 },{}],164:[function(require,module,exports){
 /**
+ * Displays a an editable Transaction row
+ */
+module.exports = React.createClass({displayName: "exports",
+  componentDidMount: function () {
+    var _self = this;
+    this._cta = $(ReactDOM.findDOMNode(this));
+    var $inputs = this._cta.find('input');
+    $inputs.on('focus', function () {
+      $(this).removeClass('invalid')
+    });
+    $inputs.on('keypress', function (e) {
+      if (e.which == 13) {
+        _self.props.onSubmit();
+      }
+    });
+    $inputs.first().focus();
+  },
+  render: function () {
+    var t = this.props.transaction;
+    var total_sale_price = t.price_listed * t.quantity;
+    var tax_amount = total_sale_price - t.price_sold;
+    var tax_rate = (tax_amount) / total_sale_price;
+    var sold = (t.price_sold > 0 && t.date_sold);
+    return (
+      React.createElement("tr", {className: this.props.className}, 
+        React.createElement("td", null, 
+          React.createElement("button", {type: "button", className: "button-cancel", onClick: this.props.onCancel}, 
+            React.createElement("i", {className: "fa fa-undo"})
+          )
+        ), 
+        React.createElement("td", null, 
+          React.createElement("input", {type: "text", name: "name", value: t.name, onChange: this.props.onChange, required: true}), 
+          React.createElement("input", {type: "hidden", name: "character_id", value: t.character_id, readOnly: true}), 
+          React.createElement("input", {type: "hidden", name: "retainer_id", value: t.retainer_id, readOnly: true}), 
+          React.createElement("input", {type: "hidden", name: "_id", value: t._id, readOnly: true})
+        ), 
+        React.createElement("td", null, React.createElement("input", {type: "checkbox", name: "high_quality", checked: t.high_quality, onChange: this.props.onChange})), 
+        React.createElement("td", null, React.createElement("input", {type: "text", name: "price_listed", value: t.price_listed, onChange: this.props.onChange, required: true})), 
+        React.createElement("td", null, React.createElement("input", {type: "text", name: "quantity", value: t.quantity, onChange: this.props.onChange, required: true})), 
+        React.createElement("td", {className: "calc"}, numeral(total_sale_price).format(Constants.formats.numbers.currency)), 
+        React.createElement("td", null, React.createElement("input", {type: "date", name: "date_listed", className: "date", value: moment.unix(t.date_listed).format(Constants.formats.dates.input), onChange: this.props.onChange, required: true})), 
+        React.createElement("td", null, React.createElement("input", {type: "date", name: "date_sold", className: "date", value: t.date_sold?moment.unix(t.date_sold).format(Constants.formats.dates.input):'', onChange: this.props.onChange})), 
+        React.createElement("td", null, React.createElement("input", {type: "text", name: "price_sold", value: t.price_sold, onChange: this.props.onChange})), 
+        React.createElement("td", {className: "calc"}, sold?numeral(tax_rate).format(Constants.formats.numbers.percent):''), 
+        React.createElement("td", {className: "calc"}, sold?numeral(tax_amount).format(Constants.formats.numbers.currency):''), 
+        React.createElement("td", {className: "col-action"}, 
+          React.createElement("button", {type: "button", className: "button-submit", onClick: this.props.onSubmit}, 
+            React.createElement("i", {className: "fa fa-save"})
+          )
+        )
+      )
+    )
+  }
+});
+
+},{}],165:[function(require,module,exports){
+/**
  * Display a new Transaction form as a table row
  */
 
 module.exports = React.createClass({displayName: "exports",
   _cta: null,
-  getInitialState: function () {
-    return {
-      name: '',
-      price_listed: '',
-      quantity: '',
-      high_quality: false,
-      date_listed: moment().format(Constants.formats.dates.display),
-      date_sold: '',
-      price_sold: '',
-      owner: this.props.owner
-    }
-  },
   componentDidMount: function () {
     var _self = this;
-    this._cta = $('.new-transaction');
-    var $inputs = this._cta.find('input');
+    var _cta = $(ReactDOM.findDOMNode(this));
+    var $inputs = _cta.find('input');
     $inputs.on('focus', function () {
       $(this).removeClass('invalid')
     });
@@ -23546,58 +23622,124 @@ module.exports = React.createClass({displayName: "exports",
     });
   },
   submit: function () {
-    var _self = this, obj = {};
-    var _invalid = false;
-    this._cta.find('input').each(function () {
-      var $input = $(this), val;
-      if ($input.attr('type') == 'checkbox') {
-        val = $input.prop('checked');
-      } else {
-        val = $input.val().trim();
-        if ($input.prop('required') && val == '') {
-          _invalid = true;
-          $input.addClass('invalid');
-          return;
-        }
-        if ($input.hasClass('date')) {
-          if (val != '') {
-            var date = moment(val, Constants.formats.dates.display);
-            if (!date.isValid()) {
-              _invalid = true;
-              $input.addClass('invalid');
-              return;
-            } else {
-              val = date.unix();
-            }
-          }
-        }
-      }
-      obj[$input.attr('name')] = val;
-    });
+    this.props.onSubmit();
+  },
+  render: function () {
+    var t = this.props.transaction;
+    var total_sale_price = t.price_listed * t.quantity;
+    var tax_amount = total_sale_price - t.price_sold;
+    var tax_rate = (tax_amount) / total_sale_price;
+    var sold = (t.price_sold > 0 && t.date_sold);
+    return (
+      React.createElement("tr", {className: "new-transaction"}, 
+        React.createElement("td", {colSpan: "2"}, 
+          React.createElement("input", {type: "text", name: "name", value: t.name, onChange: this.props.onChange, required: true}), 
+          React.createElement("input", {type: "hidden", name: "character_id", value: this.props.character_id, readOnly: true}), 
+          React.createElement("input", {type: "hidden", name: "retainer_id", value: this.props.retainer_id, readOnly: true})
+        ), 
+        React.createElement("td", null, React.createElement("input", {type: "checkbox", name: "high_quality", checked: t.high_quality, onChange: this.props.onChange})), 
+        React.createElement("td", null, React.createElement("input", {type: "text", name: "price_listed", value: t.price_listed, onChange: this.props.onChange, required: true})), 
+        React.createElement("td", null, React.createElement("input", {type: "text", name: "quantity", value: t.quantity, onChange: this.props.onChange, required: true})), 
+        React.createElement("td", {className: "calc"}, numeral(total_sale_price).format(Constants.formats.numbers.currency)), 
+        React.createElement("td", null, React.createElement("input", {type: "date", name: "date_listed", className: "date", value: t.date_listed?moment.unix(t.date_listed).format(Constants.formats.dates.input):'', onChange: this.props.onChange, required: true})), 
+        React.createElement("td", null, React.createElement("input", {type: "date", name: "date_sold", className: "date", value: t.date_sold?moment.unix(t.date_sold).format(Constants.formats.dates.input):'', onChange: this.props.onChange})), 
+        React.createElement("td", null, React.createElement("input", {type: "text", name: "price_sold", value: t.price_sold, onChange: this.props.onChange})), 
+        React.createElement("td", {className: "calc"}, sold?numeral(tax_rate).format(Constants.formats.numbers.percent):''), 
+        React.createElement("td", {className: "calc"}, sold?numeral(tax_amount).format(Constants.formats.numbers.currency):''), 
+        React.createElement("td", {className: "col-action"}, 
+          React.createElement("button", {type: "button", className: "button button-submit", onClick: this.submit}, 
+            React.createElement("i", {className: "fa fa-plus"})
+          )
+        )
+      )
+    )
+  }
+});
 
-    if (_invalid) {
-      this._cta.find('input.invalid').first().focus();
-      alert('Missing a required field!');
+},{}],166:[function(require,module,exports){
+/**
+ * Displays a static Transaction row
+ */
+module.exports = React.createClass({displayName: "exports",
+  render: function () {
+    var t = this.props.transaction;
+    var total_sale_price = t.price_listed * t.quantity;
+    var tax_amount = total_sale_price - t.price_sold;
+    var tax_rate = (tax_amount) / total_sale_price;
+    var sold = (t.price_sold > 0 && t.date_sold);
+    return (
+      React.createElement("tr", {className: (sold)?'sold':''}, 
+        React.createElement("td", null, 
+          React.createElement("button", {type: "button", className: "button-edit", onClick: this.props.onEditClick}, 
+            React.createElement("i", {className: "fa fa-pencil"})
+          )
+        ), 
+        React.createElement("td", {className: "align-left"}, t.name), 
+        React.createElement("td", null, t.high_quality?React.createElement("i", {className: "fa fa-check"}):''), 
+        React.createElement("td", null, numeral(t.price_listed).format(Constants.formats.numbers.currency)), 
+        React.createElement("td", null, numeral(t.quantity).format()), 
+        React.createElement("td", {className: "calc"}, numeral(total_sale_price).format(Constants.formats.numbers.currency)), 
+        React.createElement("td", {className: "align-left"}, moment.unix(t.date_listed).format(Constants.formats.dates.display)), 
+        React.createElement("td", {className: "align-left"}, sold?moment.unix(t.date_sold).format(Constants.formats.dates.display):''), 
+        React.createElement("td", null, sold?numeral(t.price_sold).format(Constants.formats.numbers.currency):''), 
+        React.createElement("td", {className: "calc"}, sold?numeral(tax_rate).format(Constants.formats.numbers.percent):''), 
+        React.createElement("td", {className: "calc"}, sold?numeral(tax_amount).format(Constants.formats.numbers.currency):''), 
+        React.createElement("td", {className: "col-action"}, React.createElement("button", {type: "button", className: "button-delete", onClick: this.props.onDeleteClick}, React.createElement("i", {className: "fa fa-times"})))
+      )
+    )
+  }
+});
+
+},{}],167:[function(require,module,exports){
+/**
+ * Display a Transaction as a table row
+ */
+
+var EditRow = require('./Transaction/Row_Edit.jsx');
+var ViewRow = require('./Transaction/Row_View.jsx');
+var NewRow  = require('./Transaction/Row_New.jsx');
+
+module.exports = React.createClass({displayName: "exports",
+  getInitialState: function () {
+    return {
+      _edit: false,
+      _original: $.extend(false, this.props.transaction)
+    };
+  },
+  insertRow: function () {
+    var _self = this;
+    var _cta = $(ReactDOM.findDOMNode(this));
+    var valid = Constants.validateTransaction(this.props.transaction);
+    if (valid != true) {
+      var errorStr = '';
+      for (var i=0; i < valid.length; i++) {
+        var error = valid[i];
+        errorStr += error.msg + '\n';
+        _cta.find('input[name='+error.prop+']').addClass('invalid');
+      }
+      alert('Validation Error:'+errorStr);
       return false;
     }
     // now submit the form
     $.ajax({
       url: '/api/insert',
       dataType: 'json',
-      data: obj,
+      data: this.props.transaction,
       method: 'POST',
       success: function (resp) {
         if (Constants.ajax.validateResponse(resp)) {
-          _self.setState(_self.getInitialState());
           _self.props.onUpdate(resp.transactions);
-          _self._cta.find('input[name=name]').focus();
+          _cta.find('input[name=name]').focus();
           return;
         }
+        var errorStr = '';
         if (resp.error.errors) {
           for (var key in resp.error.errors) {
-            _self._cta.find('input[name='+key+']').addClass('invalid');
+            _cta.find('input[name='+key+']').addClass('invalid');
+            errorStr += resp.error.errors[key].message + '\n';
           }
         }
+        alert(resp.message + '\n' + errorStr);
       },
       error: function () {
         alert('An error occurred and your entry was not added');
@@ -23607,57 +23749,45 @@ module.exports = React.createClass({displayName: "exports",
       }
     });
   },
-  handleCheck: function (event) {
-    var obj = {};
-    obj[event.target.name] = event.target.checked;
-    this.setState(obj);
+  updateRow: function () {
+    var _self = this;
+    $.ajax({
+      url: '/api/update',
+      dataType: 'json',
+      method: 'POST',
+      data: this.props.transaction,
+      success: function (resp) {
+        if (Constants.ajax.validateResponse(resp)) {
+          _self.uneditRow();
+          _self.props.onUpdate(resp.transactions);
+          return;
+        }
+        alert('An error occurred and your entry was not updated.');
+      },
+      error: function () {
+        alert('An error occurred and your entry was not updated.');
+      },
+      complete: function () {
+        // TODO: hide ajaxclassName="date"
+      }
+    });
   },
-  handleChange: function(event) {
-    var obj = {};
-    obj[event.target.name] = event.target.value.trim();
-    this.setState(obj);
-  },
-  render: function () {
-    return (
-      React.createElement("tr", {className: "new-transaction"}, 
-        React.createElement("td", null, 
-          React.createElement("input", {type: "text", name: "name", value: this.state.name, onChange: this.handleChange, required: true}), 
-          React.createElement("input", {type: "hidden", name: "character_id", value: this.state.owner.character_id}), 
-          React.createElement("input", {type: "hidden", name: "retainer_id", value: this.state.owner.retainer_id})
-        ), 
-        React.createElement("td", null, React.createElement("input", {type: "checkbox", name: "high_quality", checked: this.state.high_quality, onChange: this.handleCheck})), 
-        React.createElement("td", null, React.createElement("input", {type: "text", name: "price_listed", value: this.state.price_listed, onChange: this.handleChange, required: true})), 
-        React.createElement("td", null, React.createElement("input", {type: "text", name: "quantity", value: this.state.quantity, onChange: this.handleChange, required: true})), 
-        React.createElement("td", null, " "), 
-        React.createElement("td", null, React.createElement("input", {type: "text", name: "date_listed", className: "date", value: this.state.date_listed, onChange: this.handleChange, required: true})), 
-        React.createElement("td", null, React.createElement("input", {type: "text", name: "date_sold", className: "date", value: this.state.date_sold, onChange: this.handleChange})), 
-        React.createElement("td", null, React.createElement("input", {type: "text", name: "price_sold", value: this.state.price_sold, onChange: this.handleChange})), 
-        React.createElement("td", {colSpan: "2"}, " "), 
-        React.createElement("td", null, React.createElement("button", {type: "button", className: "new-transaction-submit", onClick: this.submit}, "+"))
-      )
-    )
-  }
-});
-
-},{}],165:[function(require,module,exports){
-/**
- * Display a Transaction as a table row
- */
-
-module.exports = React.createClass({displayName: "exports",
   deleteRow: function () {
-    var state = this.getInitialState();
+    if (!confirm("are you sure you want to delete this object? This action can not be undone.")) {
+      return false;
+    }
     var _self = this;
     $.ajax({
       url: '/api/delete',
       dataType: 'json',
       data: {
-        id: state.id
+        id: this.props.transaction._id,
+        character_id: this.props.transaction.character_id,
+        retainer_id: this.props.transaction.retainer_id
       },
       method: 'POST',
       success: function (resp) {
         if (Constants.ajax.validateResponse(resp)) {
-          _self.setState(_self.getInitialState());
           _self.props.onUpdate(resp.transactions);
           return;
         }
@@ -23671,80 +23801,113 @@ module.exports = React.createClass({displayName: "exports",
       }
     });
   },
-  getInitialState: function () {
-    return {id: this.props.transaction._id}
+  onCancel: function () {
+    this.props.onCancel(this.props.transaction, this.state._original);
+  },
+  uneditRow: function () {
+    this.setState({_edit: false});
+  },
+  editRow: function () {
+    this.setState({_edit: true});
+  },
+  handleChange: function(event) {
+    var transaction = this.props.transaction;
+    if (event.target.type == 'checkbox') {
+      transaction[event.target.name] = event.target.checked;
+    } else if (event.target.type == 'date') {
+      if (event.target.value.trim() == '') {
+        transaction[event.target.name] = '';
+      } else {
+        transaction[event.target.name] = moment(event.target.value, Constants.formats.dates.input).unix();
+      }
+    } else {
+      transaction[event.target.name] = event.target.value;
+    }
+    this.setState({transaction: transaction});
   },
   render: function () {
-    var t = this.props.transaction;
-    var total_sale_price = t.price_listed * t.quantity;
-    var tax_amount = total_sale_price - t.price_sold;
-    var tax_rate = (tax_amount) / total_sale_price;
-    var sold = (t.price_sold > 0);
-    return (
-      React.createElement("tr", {className: (sold)?'sold':''}, 
-        React.createElement("td", null, t.name), 
-        React.createElement("td", null, t.high_quality?'X':''), 
-        React.createElement("td", null, numeral(t.price_listed).format(Constants.formats.numbers.currency)), 
-        React.createElement("td", null, numeral(t.quantity).format()), 
-        React.createElement("td", {className: "calc"}, numeral(total_sale_price).format(Constants.formats.numbers.currency)), 
-        React.createElement("td", null, moment.unix(t.date_listed).format(Constants.formats.dates.display)), 
-        React.createElement("td", null, t.date_sold?moment.unix(t.date_sold).format(Constants.formats.dates.display):''), 
-        React.createElement("td", null, sold?numeral(t.price_sold).format(Constants.formats.numbers.currency):''), 
-        React.createElement("td", {className: "calc"}, sold?numeral(tax_rate).format(Constants.formats.numbers.percent):''), 
-        React.createElement("td", {className: "calc"}, sold?numeral(tax_amount).format(Constants.formats.numbers.currency):''), 
-        React.createElement("td", {className: "col-delete"}, sold?'':React.createElement("button", {type: "button", onClick: this.deleteRow}, "X"))
-      )
-    )
+    if (this.state._edit) {
+      return React.createElement(EditRow, {transaction: this.props.transaction, onChange: this.handleChange, onSubmit: this.updateRow, onCancel: this.onCancel, key: this.props.key})
+    } else if (this.props.isNew) {
+      return React.createElement(NewRow, {transaction: this.props.transaction, owner: this.props.owner, onChange: this.handleChange, onSubmit: this.insertRow})
+    } else {
+      return React.createElement(ViewRow, {transaction: this.props.transaction, onEditClick: this.editRow, onDeleteClick: this.deleteRow})
+    }
   }
 });
 
-},{}],166:[function(require,module,exports){
+},{"./Transaction/Row_Edit.jsx":164,"./Transaction/Row_New.jsx":165,"./Transaction/Row_View.jsx":166}],168:[function(require,module,exports){
 var Transaction_row = require('./Transaction_row.jsx');
-var Transaction_new_row = require('./Transaction_new_row.jsx');
 
 module.exports = React.createClass({displayName: "exports",
   getInitialState: function () {
     // set initial application state
-    var charCode = JSON.parse(document.getElementById('character-code').innerHTML) || {};
     return {
       transactions: JSON.parse(document.getElementById('initial-trans').innerHTML) || [],
-      owner: charCode
+      owner: JSON.parse(document.getElementById('character-code').innerHTML) || {},
+      newTransaction: this.getBaseTransaction()
     };
   },
+  getBaseTransaction: function () {
+    var owner = JSON.parse(document.getElementById('character-code').innerHTML);
+    return {
+      name: '',
+      price_listed: '',
+      quantity: '',
+      high_quality: false,
+      date_listed: moment().unix(),
+      date_sold: '',
+      price_sold: '',
+      character_id: owner.character_id,
+      retainer_id: owner.retainer_id
+    }
+  },
+  resetTransaction: function (trans, original) {
+    console.log('resetting');
+    var index = this.state.transactions.findIndex(function (t) {
+      return t._id == trans._id;
+    });
+    this.state.transactions[index] = original;
+    this.setState({transactions: this.state.transactions});
+  },
   onUpdate: function (transactions) {
-    this.setState({transactions: transactions});
+    if (transactions) {
+      this.setState({transactions: transactions, newTransaction: this.getBaseTransaction()});
+    } else {
+      this.setState(this.state);
+    }
   },
   render: function() {
     var _self = this;
     return (
       React.createElement("table", null, 
         React.createElement("thead", null, 
-        React.createElement("tr", null, 
-          React.createElement("th", null, "Item"), 
-          React.createElement("th", null, "HQ"), 
-          React.createElement("th", null, "Price"), 
-          React.createElement("th", null, "Quantity"), 
-          React.createElement("th", null, "Sale Price"), 
-          React.createElement("th", null, "List Date"), 
-          React.createElement("th", null, "Sell Date"), 
-          React.createElement("th", null, "Sell Price"), 
-          React.createElement("th", {className: "tax"}, "Tax Rate"), 
-          React.createElement("th", null, "Tax Paid"), 
-          React.createElement("th", {className: "col-delete"}, " ")
-        )
+          React.createElement("tr", null, 
+            React.createElement("th", {colSpan: "2"}, "Item"), 
+            React.createElement("th", null, "HQ"), 
+            React.createElement("th", null, "Price"), 
+            React.createElement("th", null, "Quantity"), 
+            React.createElement("th", null, "Sale Price"), 
+            React.createElement("th", {className: "align-left"}, "List Date"), 
+            React.createElement("th", {className: "align-left"}, "Sell Date"), 
+            React.createElement("th", null, "Sell Price"), 
+            React.createElement("th", {className: "tax"}, "Tax Rate"), 
+            React.createElement("th", null, "Tax Paid"), 
+            React.createElement("th", {className: "col-delete"}, " ")
+          )
         ), 
         React.createElement("tbody", null, 
-        this.state.transactions.map(function (row, index) {
-          return React.createElement(Transaction_row, {transaction: row, onUpdate: _self.onUpdate, key: index});
-        }), 
-        React.createElement(Transaction_new_row, {owner: this.state.owner, onUpdate: this.onUpdate})
+          React.createElement(Transaction_row, {isNew: true, transaction: this.state.newTransaction, owner: this.state.owner, onUpdate: this.onUpdate, key: moment().unix()}), 
+          this.state.transactions.map(function (row, index) {
+            return React.createElement(Transaction_row, {transaction: row, owner: _self.state.owner, onUpdate: _self.onUpdate, onCancel: _self.resetTransaction, key: moment().unix()});
+          })
         )
       )
     );
   }
 });
 
-},{"./Transaction_new_row.jsx":164,"./Transaction_row.jsx":165}],167:[function(require,module,exports){
+},{"./Transaction_row.jsx":167}],169:[function(require,module,exports){
 /**
  * app.jsx
  *
@@ -23787,4 +23950,4 @@ if (charCta) {
     charCta
   );
 }
-},{"./Constants.jsx":161,"./Profile.jsx":162,"./Profile_Characters.jsx":163,"./Transactions.jsx":166,"moment":2,"numeral":3,"react":160,"react-dom":4}]},{},[167]);
+},{"./Constants.jsx":161,"./Profile.jsx":162,"./Profile_Characters.jsx":163,"./Transactions.jsx":168,"moment":2,"numeral":3,"react":160,"react-dom":4}]},{},[169]);

@@ -5,13 +5,30 @@ var bcrypt = require('bcrypt-nodejs');
 
 
 var userSchema = new Schema({
-  email: {type: String, required: true},
-  password: {type: String, required: true},
+  email: {type: String, trim: true, required: true},
+  password: {type: String, trim: true, required: true},
   admin: Boolean,
   characters: Array,
   created_at: Number,
   updated_at: Number
 });
+
+/** ===============
+ ** STATIC METHODS
+ ** ===============
+ **/
+userSchema.statics.getUser = function (queryArgs, succesFn, errorFn) {
+  this.findOne(
+    queryArgs,
+    function (err, docs) {
+      if (err || !docs) {
+        errorFn.call(null, err);
+      } else {
+        succesFn.call(null, docs);
+      }
+    }
+  )
+};
 
 // on every save, pre process the data
 userSchema.pre('save', function(next) {

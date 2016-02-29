@@ -4,9 +4,10 @@
  * collection of helper functions that can be reused globally
  */
 
+var User = require('./model/user');
 var jwt = require('jsonwebtoken'); // used to create, sign, and verify tokens
 
-exports.isValidUser = function (req, callback) {
+exports.isValidUser = function (req, res, callback) {
   // check header or url parameters or post parameters for token
   var token = req.cookies[req.app.get('cookieName')];
   // decode token
@@ -20,13 +21,18 @@ exports.isValidUser = function (req, callback) {
       // if everything is good, save to request for use in other routes
       req.user = decoded._doc;
       if (decoded._doc) {
-        callback.call(null, true);
-        return true;
-      } else {
-        callback.call(null, false);
-        return false;
+        User.getUser(
+          {_id: decoded._doc._id},
+          function (user) {
+            req.user = user;
+            callback.call(null, true);
+          },
+          function () {
+            res.clearCookie(req.app.get('cookieName'));
+            callback.call(null, false);
+          }
+        )
       }
-
     });
   } else {
     // if there is no token
