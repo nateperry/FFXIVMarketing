@@ -60,7 +60,7 @@ module.exports = React.createClass({
         <tbody>
           <Transaction_row isNew={true} transaction={this.state.newTransaction} owner={this.state.owner} onUpdate={this.onUpdate} key={moment().unix()} />
           {this.state.transactions.map(function (row, index) {
-            return <Transaction_row transaction={row} owner={_self.state.owner} onUpdate={_self.onUpdate} onCancel={_self.resetTransaction} key={moment().unix()} />;
+            return <Transaction_row transaction={row} owner={_self.state.owner} onUpdate={_self.onUpdate} onCancel={_self.resetTransaction} key={index} />;
           })}
         </tbody>
       </table>
