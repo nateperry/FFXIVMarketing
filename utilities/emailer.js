@@ -1,23 +1,19 @@
 /**
  * Handles the creation and sending of all emails
  */
-var smtpConfig = {
-  host: 'smtp.gmail.com',
-  port: 465,
-  secure: true,
-  auth : {
-    user: 'ffxiv.marketing@gmail.com',
-    pass: 'days0fy0re'
-  }
-};
+var env = process.env.NODE_ENV || 'development';
+var config = require('./config')[env]['smtp'];
 var nodemailer = require('nodemailer');
-var transporter = nodemailer.createTransport(smtpConfig);
+var transporter = config ? nodemailer.createTransport(config) : null;
 
 var Emails = {
   sendPasswordReset: function (email, password, callback) {
+    if (!transporter) {
+      return;
+    }
     var template = this._build_PasswordReset(email, password);
     var mailData = {
-      from: 'ffxiv.marketing@gmail.com',
+      from: config.auth.user,
       to: email,
       subject: 'FFXIV Marketing - Password Reset',
       text: template.text,
